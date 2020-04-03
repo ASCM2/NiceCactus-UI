@@ -1,0 +1,24 @@
+query searchBusinesses($term: String!, $after: ID, $number: Int!, $categories: [AllowedCategories!]) {
+  search(term: $term, after: $after, number: $number, categories: $categories) {
+    term
+    last
+    end
+    businesses {
+      id
+      category
+      shortname
+      smalldescription
+      address
+      postalCode
+      city
+      country
+      location {
+        lat
+        lng
+      }
+      followersNumber
+      likes
+    	owner
+    }
+  }
+}

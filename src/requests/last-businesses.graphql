@@ -1,0 +1,23 @@
+query lastBusinesses($after: ID, $number: Int!, $categories: [AllowedCategories!]) {
+  last(after: $after, number: $number, categories: $categories) {
+    last
+    end
+    businesses {
+      id
+      category
+      shortname
+      smalldescription
+      address
+      postalCode
+      city
+      country
+      location {
+        lat
+        lng
+      }
+      followersNumber
+      likes
+    	owner
+    }
+  }
+}
