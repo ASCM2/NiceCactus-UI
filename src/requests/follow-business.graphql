@@ -1,0 +1,7 @@
+mutation followBusiness($user: ID!, $business: ID!) {
+  subscribe(user: $user, business: $business) {
+    id
+    follower
+    followersNumber
+  }
+}

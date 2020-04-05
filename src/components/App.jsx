@@ -1,3 +1,4 @@
+/* global localStorage: false */
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
@@ -27,6 +28,8 @@ const theme = createMuiTheme({
     },
   },
 });
+
+localStorage.user = JSON.stringify({ id: '517f1f78bcf86cd799439011', roles: ['user'], name: 'user' });
 
 const App = () => (
   <ApolloProvider client={client}>

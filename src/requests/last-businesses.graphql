@@ -1,5 +1,5 @@
-query lastBusinesses($after: ID, $number: Int!, $categories: [AllowedCategories!]) {
-  last(after: $after, number: $number, categories: $categories) {
+query lastBusinesses($user: ID!, $after: ID, $number: Int!, $categories: [AllowedCategories!]) {
+  last(user: $user, after: $after, number: $number, categories: $categories) {
     last
     end
     businesses {
@@ -15,6 +15,7 @@ query lastBusinesses($after: ID, $number: Int!, $categories: [AllowedCategories!
         lat
         lng
       }
+      follower
       followersNumber
       likes
     	owner

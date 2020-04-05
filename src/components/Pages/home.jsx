@@ -1,4 +1,4 @@
-/* global document: false, alert: false */
+/* global document: false, alert: false, localStorage: false */
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -39,7 +39,10 @@ const getComputedMargin = (viewportWidth, column, gutter) => {
   return (viewportWidth - (columns * column + (columns - 1) * gutter)) / 2;
 };
 
-const subtitles = { last: 'Les derniers établissements créés.' };
+const subtitles = {
+  last: 'Les derniers établissements créés.',
+  search: 'Les établissements correspondant à votre recherche.'
+};
 
 let cachedData;
 let cachedCategories;
@@ -48,6 +51,8 @@ let cachedSearchFetchMore;
 let searchCalled = false;
 let searchContext = false;
 const Home = () => {
+  const user = JSON.parse(localStorage.user);
+
   const [term, setTerm] = useState(undefined);
   const [categories, setCategories] = useState(null);
   const viewportWidth = document.body.clientWidth;
@@ -56,7 +61,7 @@ const Home = () => {
   const columns = cols(viewportWidth, column, gutter);
   const number = numberOfCardsToDisplay(columns);
 
-  const lastVariables = { number, categories };
+  const lastVariables = { user: user.id, number, categories };
   const {
     loading: lastLoading, error: lastError, data: lastData,
     fetchMore: lastFetchMore, refetch: lastRefetch,
@@ -91,7 +96,7 @@ const Home = () => {
   const queries = parseQuery(location);
   const urlTab = queries.get('tab');
   const [tab, setTab] = useState(urlTab === 'posts' ? 'posts' : 'wall');
-  const subtitle = subtitles.last;
+  const subtitle = searchContext ? subtitles.search : subtitles.last;
 
   const BusinessesCardsPlaceholder = Array(
     numberOfCardsToDisplay(columns)
@@ -101,10 +106,11 @@ const Home = () => {
   const BusinessesCards = (businesses) => businesses.map(({
     id, image, category, shortname,
     followersNumber, address, city,
-    smalldescription, likes,
+    smalldescription, follower, likes,
   }) => (
     <Card
       key={id}
+      id={id}
       image={image}
       icon={businessIcon(category)}
       shortname={shortname}
@@ -113,6 +119,7 @@ const Home = () => {
       shortAddress={address}
       city={city}
       smalldescription={smalldescription}
+      follower={follower}
       likes={likes}
       onCategorySelected={onCategorySelected}
     />
@@ -141,9 +148,13 @@ const Home = () => {
                 onChipSelect={
                   (selected) => {
                     if (searchContext) {
-                      searchRefetch({ term, number, categories: selected });
+                      searchRefetch({
+                        user: user.id, term, number, categories: selected,
+                      });
                     } else {
-                      lastRefetch({ term, ...lastVariables, categories: selected });
+                      lastRefetch({
+                        user: user.id, term, ...lastVariables, categories: selected,
+                      });
                     }
 
                     setCategories(selected);
@@ -153,8 +164,16 @@ const Home = () => {
                   if (search.length) {
                     searchContext = true;
                     setTerm(search);
-                    if (searchCalled) { searchRefetch({ term: search, number, categories }); }
-                    searchBusinesses({ variables: { term: search, number, categories } });
+                    if (searchCalled) {
+                      searchRefetch({
+                        user: user.id, term: search, number, categories
+                      });
+                    }
+                    searchBusinesses({
+                      variables: {
+                        user: user.id, term: search, number, categories,
+                      },
+                    });
                     searchCalled = true;
                   } else {
                     searchContext = false;
@@ -198,9 +217,9 @@ const Home = () => {
               return (
                 <NoBusinesses
                   classes={{ root: className }}
-                  header={categories ? 'Aucun établissement sur KHEOS ne correspond à vos critères de recherche.' : undefined}
-                  subheader={categories
-                    ? 'Affinez vos critères ou parlez de KHEOS autour de vous à des entreprises qui pouvant être intéressées' : undefined}
+                  header={categories || searchContext ? 'Aucun établissement sur KHEOS ne correspond à vos critères de recherche.' : undefined}
+                  subheader={categories || searchContext
+                    ? 'Affinez vos critères ou parlez de KHEOS autour de vous à des établissements qui pourraient être intéressées' : undefined}
                 />
               );
             }
@@ -229,6 +248,8 @@ const Home = () => {
         }}
         onListEndReached={() => {
           if (tab === 'wall') {
+            if (!cachedData) return;
+
             const after = cachedData[cachedResolver].last;
             const { term: resultTerm, end: noBusinessesLeft } = cachedData[cachedResolver];
 
@@ -236,7 +257,7 @@ const Home = () => {
               if (cachedResolver === 'search') {
                 cachedSearchFetchMore({
                   variables: {
-                    term: resultTerm, after, number, categories: cachedCategories,
+                    user: user.id, term: resultTerm, after, number, categories: cachedCategories,
                   },
                   updateQuery: (prevData, { fetchMoreResult: moreData }) => {
                     if (!moreData) return prevData;
@@ -256,7 +277,9 @@ const Home = () => {
                 })
               } else if (cachedResolver === 'last') {
                 lastFetchMore({
-                  variables: { after, number, categories: cachedCategories },
+                  variables: {
+                    user: user.id, after, number, categories: cachedCategories
+                  },
                   updateQuery: (prevData, { fetchMoreResult: moreData }) => {
                     if (!moreData) return prevData;
                     const { __typename: typename } = prevData[cachedResolver];
@@ -276,8 +299,6 @@ const Home = () => {
               }
             }
           }
-
-          return null;
         }}
       />
     </>

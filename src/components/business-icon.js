@@ -14,9 +14,9 @@ const businessIcon = (category) => {
       return HomeIcon;
     case 'RESTAURANT':
       return RestaurantIcon;
-    case 'SCHOOL':
+    case 'ECOLE':
       return SchoolIcon;
-    case 'SUPERMARKET':
+    case 'SUPERMARCHE':
       return SupermarketIcon;
     case 'CINEMA':
       return CinemaIcon;

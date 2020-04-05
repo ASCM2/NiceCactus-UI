@@ -58,17 +58,15 @@ FollowButton.propTypes = {
   /* Fonction réquérant la connexion de l'utilisateur. */
   askSignIn: PropTypes.func,
   /* Fonction déclenchée lorsque l'utilisateur clique sur le bouton "Suivre" */
-  onSubscribe: PropTypes.func,
+  onSubscribe: PropTypes.func.isRequired,
   /* Fonction déclenchée lorsque l' utilisateur clique pour se désabonner de l'établissement */
-  onUnsubscribe: PropTypes.func,
+  onUnsubscribe: PropTypes.func.isRequired,
 };
 
 FollowButton.defaultProps = {
   connected: false,
   follower: false,
   askSignIn: () => console.log('Vous devez vous connecter pour réaliser cette action.'),
-  onSubscribe: () => console.log('Vous venez de vous abonner à cet établissement.'),
-  onUnsubscribe: () => console.log('Vous êtes en train de vous désabonner de cet établissement.'),
 };
 
 export default FollowButton;

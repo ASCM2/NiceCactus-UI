@@ -134,10 +134,10 @@ const chipsData = [
     label: 'Restaurant', icon: RestaurantIcon, category: 'RESTAURANT',
   },
   {
-    label: 'Ecole', icon: SchoolIcon, category: 'SCHOOL',
+    label: 'Ecole', icon: SchoolIcon, category: 'ECOLE',
   },
   {
-    label: 'Supermarché', icon: SupermarketIcon, category: 'SUPERMARKET',
+    label: 'Supermarché', icon: SupermarketIcon, category: 'SUPERMARCHE',
   },
   {
     label: 'Cinéma', icon: CinemaIcon, category: 'CINEMA',

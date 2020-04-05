@@ -16,9 +16,12 @@
 
    Tests (fin) */
 
-/* global alert: false */
+/* global alert: false, localStorage: false */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+
+import { loader } from 'graphql.macro';
+import { useMutation } from '@apollo/react-hooks';
 
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
@@ -40,6 +43,10 @@ import Portrait from '../portrait';
 import MainFunctionButton from '../Buttons/main-function-button';
 import FollowButton from '../Buttons/follow-button';
 import LikeButton from '../Buttons/like-button';
+import FollowerSnackBar from '../Snackbars/follower';
+import UnsuscriberSnackBar from '../Snackbars/unsubscriber';
+import NetworkErrorSnackBar from '../Snackbars/network-error';
+import ConfirmUnsubscription from '../Dialogs/confirm-unsubscription';
 
 
 const placeIconColor = blue[700];
@@ -113,15 +120,40 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const FOLLOW_BUSINESS = loader('../../requests/follow-business.graphql');
+const UNSUBSCRIBE_BUSINESS = loader('../../requests/unsubscribe-business.graphql');
+
+const getFollowersTextDescription = (followersNumber) => {
+  switch (followersNumber) {
+    case 0:
+      return 'Aucun abonné';
+    case 1:
+      return '1 abonné';
+    default:
+      return `${followersNumber} abonnés`;
+  }
+};
+
 const HomeCard = (props) => {
+  const user = JSON.parse(localStorage.user);
+  const connected = Boolean(user.roles.find((role) => role === 'user'));
+  const [subscribe, { error: followerError, data: followerData }] = useMutation(FOLLOW_BUSINESS);
+  const [unsubscribe,
+    { error: unsubscriberError, data: unsubscriberData }] = useMutation(UNSUBSCRIBE_BUSINESS);
+  const networkError = followerError || unsubscriberError;
+
   const {
-    image, icon: Icon, shortname,
+    id, image, icon: Icon, shortname,
     label, followersNumber, shortAddress,
-    city, smalldescription, mainFunction,
+    city, smalldescription, follower, mainFunction,
     likes, onShare, onCategorySelected,
     ...rest
   } = props;
   const classes = useStyles({ ...rest });
+  const [followerClosed, setFollowerClosed] = useState(false);
+  const [unsubscriberClosed, setUnsubscriberClosed] = useState(false);
+  const [networkErrorClosed, setNetworkErrorClosed] = useState(false);
+  const [confirmUnsubscription, setConfirmUnsubscription] = useState(false);
   const [raised, setRaised] = useState(false);
   const [mediaLoading, setMediaLoading] = useState(true);
   const [mediaError, setMediaError] = useState(false);
@@ -170,7 +202,7 @@ const HomeCard = (props) => {
             {shortname}
           </Typography>
           <Typography variant="subtitle1" component="div" color="textSecondary">
-            {followersNumber ? `${followersNumber} abonnés` : 'Aucun abonné'}
+            {getFollowersTextDescription(followersNumber)}
           </Typography>
           <Typography className={classes.shortAddress} title={shortAddress} variant="subtitle2" component="div" color="textSecondary" noWrap>
             {shortAddress}
@@ -187,7 +219,18 @@ const HomeCard = (props) => {
         </Typography>
       </CardContent>
       <CardActions className={classes.actions}>
-        {mainFunction ? <MainFunctionButton mainFunction={mainFunction} /> : <FollowButton />}
+        {mainFunction ? <MainFunctionButton mainFunction={mainFunction} /> : (
+          <FollowButton
+            connected={connected}
+            follower={follower}
+            onSubscribe={() => {
+              setFollowerClosed(false);
+              setNetworkErrorClosed(false);
+              subscribe({ variables: { user: user.id, business: id } });
+            }}
+            onUnsubscribe={() => setConfirmUnsubscription(true)}
+          />
+        )}
         <div className={classes.sideActions}>
           <LikeButton likes={likes} />
           <IconButton onClick={onShare} aria-label="Share">
@@ -195,11 +238,41 @@ const HomeCard = (props) => {
           </IconButton>
         </div>
       </CardActions>
+      <FollowerSnackBar
+        open={!followerClosed && Boolean(followerData)}
+        shortname={shortname}
+        onClose={() => setFollowerClosed(true)}
+      />
+      <UnsuscriberSnackBar
+        open={!unsubscriberClosed && Boolean(unsubscriberData)}
+        shortname={shortname}
+        onClose={() => setUnsubscriberClosed(true)}
+      />
+      <NetworkErrorSnackBar
+        open={!networkErrorClosed && Boolean(networkError)}
+        onClose={() => setNetworkErrorClosed(true)}
+      />
+      <ConfirmUnsubscription
+        open={confirmUnsubscription}
+        shortname={shortname}
+        onUnsubscribe={() => {
+          setUnsubscriberClosed(false);
+          setNetworkErrorClosed(false);
+          setConfirmUnsubscription(false);
+          unsubscribe({ variables: { user: user.id, business: id } });
+        }}
+        onCancel={() => {
+          setNetworkErrorClosed(false);
+          setConfirmUnsubscription(false);
+        }}
+      />
     </Card>
   );
 };
 
 HomeCard.propTypes = {
+  /* Id de l'établissement représenté par la carte. */
+  id: PropTypes.string.isRequired,
   /* L'url de l'image de la card.
      Si cette url est null ou undefined ou en cas d'erreur de récupération de l'image,
      un portrait bleu dépendant de la catégorie de l'établissement est affiché.
@@ -224,6 +297,8 @@ HomeCard.propTypes = {
   /* Petite description de l'établissement censée donner à l'utilisateur l'envie de
      cliquer sur la carte et d'en savoir plus sur l' établissement */
   smalldescription: PropTypes.string.isRequired,
+  /* Booléen indiquant si l'utilisateur actuel suit l'établissement. */
+  follower: PropTypes.bool,
   /* Fonction cliente principale dépendant de la catégorie de l'établissement qu'offre
      l'établissement aux visiteurs du site */
   mainFunction: PropTypes.string,
@@ -234,18 +309,18 @@ HomeCard.propTypes = {
   onShare: PropTypes.func,
   /* Fonction activée losque l'utilisateur clique sur le label de la carte ou sur
      le portrait dépendant de la catégorie de l'établissement. */
-  onCategorySelected: PropTypes.func,
+  onCategorySelected: PropTypes.func.isRequired,
 };
 
 HomeCard.defaultProps = {
   /* L'image d'acroche de l'établissement n'est pas obligatoire, mais nettement conseillée. */
   image: null,
+  /* Par défaut, on considère que l'utilisateur ne suit pas l'entreprise. */
+  follower: false,
   /* l'établissement peut ne pas avoir de fonctionnalités clientes à proposer. */
   mainFunction: null,
   /* Fonction de partage par défaut de l'établissement. */
   onShare: () => alert('Vous venez de partager cet établissement.'),
-  /* Fonction appelée lors du clic sur la catégorie de l'établissement. */
-  onCategorySelected: (label) => alert(`Vous avez sélectionné cet établissement de catégorie ${label}.`),
 };
 
 export default React.memo(HomeCard);
