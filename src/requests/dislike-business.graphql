@@ -1,0 +1,7 @@
+mutation dislikeBusiness($user: ID!, $business: ID!) {
+  dislike(user: $user, business: $business) {
+    id
+    liked
+    likes
+  }
+}

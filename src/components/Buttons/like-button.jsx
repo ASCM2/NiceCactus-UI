@@ -75,17 +75,15 @@ LikeButton.propTypes = {
   /* Fonction réquérant la connexion de l'utilisateur. */
   askSignIn: PropTypes.func,
   /* Fonction déclenchée lors du clic sur le bouton en état "Aimé". */
-  onLike: PropTypes.func,
+  onLike: PropTypes.func.isRequired,
   /* Fonction déclenchée lors du clic sur le bouton en état "Non aimé". */
-  onDislike: PropTypes.func,
+  onDislike: PropTypes.func.isRequired,
 };
 
 LikeButton.defaultProps = {
   connected: false,
   liked: false,
   askSignIn: () => console.log('Vous devez vous connecter pour réaliser cette action.'),
-  onLike: () => console.log('Vous venez daimer cet établissment'),
-  onDislike: () => console.log('Vous naimez plus cet établissment'),
 };
 
 export default LikeButton;

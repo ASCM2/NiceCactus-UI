@@ -29,7 +29,7 @@ const theme = createMuiTheme({
   },
 });
 
-localStorage.user = JSON.stringify({ id: '517f1f78bcf86cd799439011', roles: ['user'], name: 'user' });
+localStorage.user = JSON.stringify({ id: '517f1f78bcf86cd799439012', roles: ['user'], name: 'user' });
 
 const App = () => (
   <ApolloProvider client={client}>

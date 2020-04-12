@@ -45,6 +45,8 @@ import FollowButton from '../Buttons/follow-button';
 import LikeButton from '../Buttons/like-button';
 import FollowerSnackBar from '../Snackbars/follower';
 import UnsuscriberSnackBar from '../Snackbars/unsubscriber';
+import FanSnackBar from '../Snackbars/fan';
+import NoMoreFanSnackBar from '../Snackbars/no-more-fan';
 import NetworkErrorSnackBar from '../Snackbars/network-error';
 import ConfirmUnsubscription from '../Dialogs/confirm-unsubscription';
 
@@ -122,6 +124,8 @@ const useStyles = makeStyles((theme) => ({
 
 const FOLLOW_BUSINESS = loader('../../requests/follow-business.graphql');
 const UNSUBSCRIBE_BUSINESS = loader('../../requests/unsubscribe-business.graphql');
+const LIKE_BUSINESS = loader('../../requests/like-business.graphql');
+const DISLIKE_BUSINESS = loader('../../requests/dislike-business.graphql');
 
 const getFollowersTextDescription = (followersNumber) => {
   switch (followersNumber) {
@@ -140,18 +144,23 @@ const HomeCard = (props) => {
   const [subscribe, { error: followerError, data: followerData }] = useMutation(FOLLOW_BUSINESS);
   const [unsubscribe,
     { error: unsubscriberError, data: unsubscriberData }] = useMutation(UNSUBSCRIBE_BUSINESS);
-  const networkError = followerError || unsubscriberError;
+  const [like, { error: likeError, data: likeData }] = useMutation(LIKE_BUSINESS);
+  const [dislike,
+    { error: dislikeError, data: dislikeData }] = useMutation(DISLIKE_BUSINESS);
+  const networkError = followerError || unsubscriberError || likeError || dislikeError;
 
   const {
     id, image, icon: Icon, shortname,
     label, followersNumber, shortAddress,
-    city, smalldescription, follower, mainFunction,
-    likes, onShare, onCategorySelected,
+    city, smalldescription, follower, liked,
+    mainFunction, likes, onShare, onCategorySelected,
     ...rest
   } = props;
   const classes = useStyles({ ...rest });
   const [followerClosed, setFollowerClosed] = useState(false);
+  const [fanClosed, setFanClosed] = useState(false);
   const [unsubscriberClosed, setUnsubscriberClosed] = useState(false);
+  const [noMoreFanClosed, setNoMoreFanClosed] = useState(false);
   const [networkErrorClosed, setNetworkErrorClosed] = useState(false);
   const [confirmUnsubscription, setConfirmUnsubscription] = useState(false);
   const [raised, setRaised] = useState(false);
@@ -232,7 +241,21 @@ const HomeCard = (props) => {
           />
         )}
         <div className={classes.sideActions}>
-          <LikeButton likes={likes} />
+          <LikeButton
+            connected={connected}
+            liked={liked}
+            likes={likes}
+            onLike={() => {
+              setFanClosed(false);
+              setNetworkErrorClosed(false);
+              like({ variables: { user: user.id, business: id } });
+            }}
+            onDislike={() => {
+              setNoMoreFanClosed(false);
+              setNetworkErrorClosed(false);
+              dislike({ variables: { user: user.id, business: id } });
+            }}
+          />
           <IconButton onClick={onShare} aria-label="Share">
             <ShareIcon />
           </IconButton>
@@ -247,6 +270,16 @@ const HomeCard = (props) => {
         open={!unsubscriberClosed && Boolean(unsubscriberData)}
         shortname={shortname}
         onClose={() => setUnsubscriberClosed(true)}
+      />
+      <FanSnackBar
+        open={!fanClosed && Boolean(likeData)}
+        shortname={shortname}
+        onClose={() => setFanClosed(true)}
+      />
+      <NoMoreFanSnackBar
+        open={!noMoreFanClosed && Boolean(dislikeData)}
+        shortname={shortname}
+        onClose={() => setNoMoreFanClosed(true)}
       />
       <NetworkErrorSnackBar
         open={!networkErrorClosed && Boolean(networkError)}
@@ -299,6 +332,8 @@ HomeCard.propTypes = {
   smalldescription: PropTypes.string.isRequired,
   /* Booléen indiquant si l'utilisateur actuel suit l'établissement. */
   follower: PropTypes.bool,
+  /* Booléen indiquant si l'utilisateur actuel est fan l'établissement. */
+  liked: PropTypes.bool,
   /* Fonction cliente principale dépendant de la catégorie de l'établissement qu'offre
      l'établissement aux visiteurs du site */
   mainFunction: PropTypes.string,
@@ -315,8 +350,10 @@ HomeCard.propTypes = {
 HomeCard.defaultProps = {
   /* L'image d'acroche de l'établissement n'est pas obligatoire, mais nettement conseillée. */
   image: null,
-  /* Par défaut, on considère que l'utilisateur ne suit pas l'entreprise. */
+  /* Par défaut, on considère que l'utilisateur ne suit pas l'établissment. */
   follower: false,
+  /* Par défaut, on considère que l'utilisateur n'est pas fan de l'établissement. */
+  liked: false,
   /* l'établissement peut ne pas avoir de fonctionnalités clientes à proposer. */
   mainFunction: null,
   /* Fonction de partage par défaut de l'établissement. */

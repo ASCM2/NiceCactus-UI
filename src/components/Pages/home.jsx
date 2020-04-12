@@ -1,4 +1,4 @@
-/* global document: false, alert: false, localStorage: false */
+/* global document: false, localStorage: false */
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -46,6 +46,7 @@ const subtitles = {
 
 let cachedData;
 let cachedCategories;
+let cachedSortCriteria;
 let cachedResolver;
 let cachedSearchFetchMore;
 let searchCalled = false;
@@ -55,6 +56,7 @@ const Home = () => {
 
   const [term, setTerm] = useState(undefined);
   const [categories, setCategories] = useState(null);
+  const [sortCriteria, setSortCriteria] = useState(null);
   const viewportWidth = document.body.clientWidth;
   const column = 360;
   const gutter = 10;
@@ -86,6 +88,7 @@ const Home = () => {
 
   cachedData = data || cachedData;
   cachedCategories = categories || cachedCategories;
+  cachedSortCriteria = sortCriteria || cachedSortCriteria;
   cachedResolver = resolver || cachedResolver;
 
   if (searchContext) {
@@ -107,6 +110,7 @@ const Home = () => {
     id, image, category, shortname,
     followersNumber, address, city,
     smalldescription, follower, likes,
+    liked,
   }) => (
     <Card
       key={id}
@@ -120,6 +124,7 @@ const Home = () => {
       city={city}
       smalldescription={smalldescription}
       follower={follower}
+      liked={liked}
       likes={likes}
       onCategorySelected={onCategorySelected}
     />
@@ -149,11 +154,11 @@ const Home = () => {
                   (selected) => {
                     if (searchContext) {
                       searchRefetch({
-                        user: user.id, term, number, categories: selected,
+                        user: user.id, term, number, categories: selected, sortCriteria,
                       });
                     } else {
                       lastRefetch({
-                        user: user.id, term, ...lastVariables, categories: selected,
+                        user: user.id, ...lastVariables, categories: selected, sortCriteria,
                       });
                     }
 
@@ -166,12 +171,12 @@ const Home = () => {
                     setTerm(search);
                     if (searchCalled) {
                       searchRefetch({
-                        user: user.id, term: search, number, categories
+                        user: user.id, term: search, number, categories, sortCriteria,
                       });
                     }
                     searchBusinesses({
                       variables: {
-                        user: user.id, term: search, number, categories,
+                        user: user.id, term: search, number, categories, sortCriteria,
                       },
                     });
                     searchCalled = true;
@@ -195,7 +200,24 @@ const Home = () => {
         }}
         sortCriteria={(className) => {
           if (tab === 'wall') {
-            return <Criterias classes={{ root: className }} onSelect={(criteria) => alert(`Vous avez choisi le critère ${criteria}`)} />
+            return (
+              <Criterias
+                classes={{ root: className }}
+                onSelect={(criteria) => {
+                  if (searchContext) {
+                    searchRefetch({
+                      user: user.id, term, number, categories, sortCriteria: criteria,
+                    });
+                  } else {
+                    lastRefetch({
+                      user: user.id, ...lastVariables, categories, sortCriteria: criteria,
+                    });
+                  }
+
+                  setSortCriteria(criteria);
+                }}
+              />
+            );
           }
 
           return null;
@@ -257,7 +279,12 @@ const Home = () => {
               if (cachedResolver === 'search') {
                 cachedSearchFetchMore({
                   variables: {
-                    user: user.id, term: resultTerm, after, number, categories: cachedCategories,
+                    user: user.id,
+                    term: resultTerm,
+                    after,
+                    number,
+                    categories: cachedCategories,
+                    sortCriteria: cachedSortCriteria,
                   },
                   updateQuery: (prevData, { fetchMoreResult: moreData }) => {
                     if (!moreData) return prevData;
@@ -276,9 +303,22 @@ const Home = () => {
                   }
                 })
               } else if (cachedResolver === 'last') {
+                console.log('(fetch More): Last');
+                console.log({
+                  user: user.id,
+                  after,
+                  number,
+                  categories: cachedCategories,
+                  sortCriteria: cachedSortCriteria,
+                });
+
                 lastFetchMore({
                   variables: {
-                    user: user.id, after, number, categories: cachedCategories
+                    user: user.id,
+                    after,
+                    number,
+                    categories: cachedCategories,
+                    sortCriteria: cachedSortCriteria,
                   },
                   updateQuery: (prevData, { fetchMoreResult: moreData }) => {
                     if (!moreData) return prevData;

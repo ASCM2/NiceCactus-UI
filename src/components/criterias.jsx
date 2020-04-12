@@ -39,38 +39,42 @@ const Criterias = (props) => {
     <div className={classes.root}>
       <div className={classes.criteria}>
         <Checkbox
-          checked={active === 'Liked Most'}
+          checked={active === 'LIKED_MOST'}
           color="secondary"
           inputProps={{ 'aria-label': 'The most liked' }}
-          onChange={onChange('Liked Most')}
+          onChange={onChange('LIKED_MOST')}
         />
         <Typography className={classes.label} variant="subtitle2" color="textSecondary">Les plus aimés</Typography>
       </div>
       <div className={classes.criteria}>
         <Checkbox
-          checked={active === 'Followed Most'}
+          checked={active === 'FOLLOWED_MOST'}
           color="secondary"
           inputProps={{ 'aria-label': 'The most followed' }}
-          onChange={onChange('Followed Most')}
+          onChange={onChange('FOLLOWED_MOST')}
         />
         <Typography className={classes.label} variant="subtitle2" color="textSecondary">Les plus suivis</Typography>
       </div>
-      <div className={classes.criteria}>
-        <Checkbox
-          checked={active === 'Nearest'}
-          color="secondary"
-          inputProps={{ 'aria-label': 'The nearest' }}
-          onChange={onChange('Nearest')}
-        />
-        <Typography className={classes.label} variant="subtitle2" color="textSecondary">Les plus proches</Typography>
-      </div>
+      {/*
+        <div className={classes.criteria}>
+          <Checkbox
+            checked={active === 'Nearest'}
+            color="secondary"
+            inputProps={{ 'aria-label': 'The nearest' }}
+            onChange={onChange('Nearest')}
+          />
+          <Typography className={classes.label} variant="subtitle2" color="textSecondary">
+            Les plus proches
+          </Typography>
+        </div>
+      */}
     </div>
   );
 };
 
 Criterias.propTypes = {
   /* The active criteria selected by the user. */
-  initialActive: PropTypes.oneOf(['Liked Most', 'Followed Most', 'Nearest']),
+  initialActive: PropTypes.oneOf(['LIKED_MOST', 'FOLLOWED_MOST']),
   /* Function called with active name of the criteria selected or null otherwise. */
   onSelect: PropTypes.func.isRequired,
 };
