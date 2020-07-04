@@ -14,7 +14,7 @@
   Tests (fin) */
 
 /* global document: false, window: false */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -128,6 +128,13 @@ const HomeLayout = (props) => {
   if (placeholderUI) {
     window.removeEventListener('scroll', scrollHandler);
   }
+
+  useEffect(() => {
+    window.addEventListener('scroll', scrollHandler);
+    return () => {
+      window.removeEventListener('scroll', scrollHandler);
+    };
+  });
 
   return (
     <div className={classes.root}>

@@ -1,6 +1,6 @@
 /* global document: false, localStorage: false */
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Redirect } from 'react-router-dom';
 
 import { loader } from 'graphql.macro';
 import { useQuery, useLazyQuery } from '@apollo/react-hooks';
@@ -54,6 +54,7 @@ let searchContext = false;
 const Home = () => {
   const user = JSON.parse(localStorage.user);
 
+  const [redirectToCreateBusiness, setRedirectToCreateBusiness] = useState(false);
   const [term, setTerm] = useState(undefined);
   const [categories, setCategories] = useState(null);
   const [sortCriteria, setSortCriteria] = useState(null);
@@ -115,7 +116,7 @@ const Home = () => {
     <Card
       key={id}
       id={id}
-      image={image}
+      image={image ? image.src : null}
       icon={businessIcon(category)}
       shortname={shortname}
       label={category}
@@ -142,6 +143,7 @@ const Home = () => {
             startingTab={tab}
             onWallClicked={() => setTab('wall')}
             onPostsClicked={() => setTab('posts')}
+            createPage={() => setRedirectToCreateBusiness(true)}
           />
         )}
         search={(className) => {
@@ -303,15 +305,6 @@ const Home = () => {
                   }
                 })
               } else if (cachedResolver === 'last') {
-                console.log('(fetch More): Last');
-                console.log({
-                  user: user.id,
-                  after,
-                  number,
-                  categories: cachedCategories,
-                  sortCriteria: cachedSortCriteria,
-                });
-
                 lastFetchMore({
                   variables: {
                     user: user.id,
@@ -341,6 +334,9 @@ const Home = () => {
           }
         }}
       />
+      {redirectToCreateBusiness && (
+        <Redirect push to="/create" />
+      )}
     </>
   );
 }

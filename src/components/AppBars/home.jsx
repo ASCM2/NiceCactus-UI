@@ -317,7 +317,7 @@ HomeAppBar.defaultProps = {
   startingTab: 'wall',
 };
 
-export default (props) => (
+export default React.memo((props) => (
   <HomeAppBar
     connected
     withoutPage
@@ -326,7 +326,6 @@ export default (props) => (
       Vous disposez déjà d'un établissement sur KHEOS.
       Vous ne pouvez pas en créer un de nouveau.
     `)}
-    createPage={() => alert('Vous êtes en train de créer une page')}
     showMenu={(ref) => {
       console.log("Référence de l'onglet Mon compte.");
       console.log(ref);
@@ -340,4 +339,4 @@ export default (props) => (
     onPostsClicked={() => alert('Vous venez de switcher sur les posts')}
     {...props}
   />
-);
+));

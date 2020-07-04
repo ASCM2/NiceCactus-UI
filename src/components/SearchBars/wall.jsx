@@ -249,4 +249,4 @@ SearchBar.defaultProps = {
   selected: [],
 };
 
-export default SearchBar;
+export default React.memo(SearchBar);

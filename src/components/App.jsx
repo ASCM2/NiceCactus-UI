@@ -2,7 +2,9 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-import ApolloClient from 'apollo-boost';
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { createUploadLink } from 'apollo-upload-client';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -13,10 +15,12 @@ import purple from '@material-ui/core/colors/purple';
 import green from '@material-ui/core/colors/green';
 
 import Home from './Pages/home';
+import CreateBusiness from './Pages/create-business';
 
 
 const client = new ApolloClient({
-  uri: process.env.REACT_APP_BACK_END_URL,
+  link: createUploadLink({ uri: process.env.REACT_APP_BACK_END_URL }),
+  cache: new InMemoryCache()
 });
 
 const theme = createMuiTheme({
@@ -38,6 +42,7 @@ const App = () => (
       <BrowserRouter>
         <Switch>
           <Route path="/" exact component={Home} />
+          <Route path="/create" exact component={CreateBusiness} />
           <Route component={() => <h1>404 Not Found.</h1>} />
         </Switch>
       </BrowserRouter>

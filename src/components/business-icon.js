@@ -20,9 +20,8 @@ const businessIcon = (category) => {
       return SupermarketIcon;
     case 'CINEMA':
       return CinemaIcon;
-    case '':
     default:
-      return null;
+      return undefined;
   }
 }
 

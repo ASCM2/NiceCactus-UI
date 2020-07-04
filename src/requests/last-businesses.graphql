@@ -4,6 +4,9 @@ query lastBusinesses($user: ID!, $after: ID, $number: Int!, $categories: [Allowe
     end
     businesses {
       id
+      image {
+        src
+      }
       category
       shortname
       smalldescription

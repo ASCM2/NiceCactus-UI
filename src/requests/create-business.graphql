@@ -1,0 +1,33 @@
+mutation createBusiness(
+  $image: Upload,
+  $category: AllowedCategories!,
+  $shortname: String!,
+  $longname: String!,
+  $smalldescription: String!,
+  $address: String!,
+  $postalCode: String!,
+  $city: String!,
+  $country: String!,
+  $lat: Float!,
+  $lng: Float!,
+  $owner: ID!
+) {
+  create(
+    business: {
+      image: $image,
+      category: $category,
+      shortname: $shortname,
+      longname: $longname,
+      smalldescription: $smalldescription,
+      address: $address,
+      postalCode: $postalCode,
+      city: $city,
+      country: $country,
+      lat: $lat,
+      lng: $lng,
+      owner: $owner
+    }
+  ) {
+    id
+  }
+}
