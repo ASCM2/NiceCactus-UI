@@ -71,6 +71,7 @@ const Home = () => {
   } = useQuery(LAST_BUSINESSES, {
     variables: lastVariables,
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
   });
   const [searchBusinesses, {
     loading: searchLoading, error: searchError, data: searchData,

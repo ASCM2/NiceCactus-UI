@@ -48,7 +48,7 @@ Portrait.propTypes = {
 Portrait.defaultProps = {
   icon: 'div',
   color: blue[300],
-  onClick: undefined,
+  onClick: () => {},
 };
 
 export default Portrait;
