@@ -55,6 +55,7 @@ const Home = () => {
   const user = JSON.parse(localStorage.user);
 
   const [redirectToCreateBusiness, setRedirectToCreateBusiness] = useState(false);
+  const [redirectId, setRedirectId] = useState(null);
   const [term, setTerm] = useState(undefined);
   const [categories, setCategories] = useState(null);
   const [sortCriteria, setSortCriteria] = useState(null);
@@ -129,6 +130,7 @@ const Home = () => {
       liked={liked}
       likes={likes}
       onCategorySelected={onCategorySelected}
+      onRedirect={() => setRedirectId(id)}
     />
   ));
 
@@ -337,6 +339,9 @@ const Home = () => {
       />
       {redirectToCreateBusiness && (
         <Redirect push to="/create" />
+      )}
+      {redirectId && (
+        <Redirect push to={`/${redirectId}`} />
       )}
     </>
   );

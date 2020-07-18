@@ -1,0 +1,12 @@
+query queryBusiness($user: ID!, $business: ID!) {
+  business(user: $user, id: $business) {
+    shortname
+    longname
+    images {
+      src
+      likes
+      likes
+    }
+    owner
+  }
+}

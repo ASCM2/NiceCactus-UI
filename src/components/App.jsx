@@ -16,6 +16,7 @@ import green from '@material-ui/core/colors/green';
 
 import Home from './Pages/home';
 import CreateBusiness from './Pages/create-business';
+import Business from './Pages/business';
 
 
 const client = new ApolloClient({
@@ -43,6 +44,7 @@ const App = () => (
         <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/create" exact component={CreateBusiness} />
+          <Route path="/:id" exact component={Business} />
           <Route component={() => <h1>404 Not Found.</h1>} />
         </Switch>
       </BrowserRouter>

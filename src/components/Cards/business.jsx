@@ -153,8 +153,8 @@ const HomeCard = (props) => {
     id, image, icon: Icon, shortname,
     label, followersNumber, shortAddress,
     city, smalldescription, follower, liked,
-    mainFunction, likes, onShare, onCategorySelected,
-    ...rest
+    mainFunction, likes, onShare,
+    onCategorySelected, onRedirect, ...rest
   } = props;
   const classes = useStyles({ ...rest });
   const [followerClosed, setFollowerClosed] = useState(false);
@@ -180,9 +180,16 @@ const HomeCard = (props) => {
           component="img"
           onLoad={() => setMediaLoading(false)}
           onError={() => setMediaError(true)}
+          onClick={() => onRedirect()}
         />
       )}
-      error={<Portrait classes={{ root: classes.media }} icon={Icon} />}
+      error={(
+        <Portrait
+          classes={{ root: classes.media }}
+          icon={Icon}
+          onClick={() => onRedirect()}
+        />
+      )}
       loading={<Skeleton height="100%" width="100%" component="div" variant="rect" />}
     />
   );
@@ -345,6 +352,9 @@ HomeCard.propTypes = {
   /* Fonction activée losque l'utilisateur clique sur le label de la carte ou sur
      le portrait dépendant de la catégorie de l'établissement. */
   onCategorySelected: PropTypes.func.isRequired,
+  /* Fonction activée lorsque l'utilisateur clique sur le portrait image de la carte
+     afin de se rendre sur la page détaillée de l'établissement. */
+  onRedirect: PropTypes.func.isRequired,
 };
 
 HomeCard.defaultProps = {
