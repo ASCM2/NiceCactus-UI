@@ -1,0 +1,7 @@
+mutation dislikeImage($user: ID!, $business: ID!, $image: ID!) {
+  dislikeimage(user: $user, business: $business, image: $image) {
+    id
+    liked
+    likes
+  }
+}

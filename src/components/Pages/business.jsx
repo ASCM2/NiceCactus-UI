@@ -3,92 +3,125 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { loader } from 'graphql.macro';
+import { gql } from '@apollo/client';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import AppBar from '../AppBars/business';
+import AppBarSkeleton from '../Skeletons/business-appbar';
 import Layout from '../Layouts/business';
-import Gallery from '../Galleries/gallery';
+import Gallery from '../Galleries/business-gallery';
+import GallerySkeleton from '../Skeletons/business-gallery';
 
 
 const QUERY_BUSINESS = loader('../../requests/query-business.graphql');
 const UPLOAD_IMAGES = loader('../../requests/upload-images.graphql');
-const user = JSON.parse(localStorage.user);
+const QUERY_IMAGES = gql`
+  query queryImages($user: ID!, $business: ID!) {
+    business(user: $user, id: $business) {
+      images {
+        id
+        src
+        liked
+        likes
+      }
+    }
+  }
+`;
 
 const Business = (props) => {
+  const user = JSON.parse(localStorage.user);
+
   const { match: { params: { id } }, history } = props;
   const [mode, setMode] = useState('view');
-  const [uploading, setUploading] = useState(false);
+  const [clientFilesUploading, setClientFilesUploading] = useState(false);
   const {
-    loading, error, data,
+    loading, data,
   } = useQuery(QUERY_BUSINESS, { variables: { user: user.id, business: id } });
-  const [upload,
-    { error: uploadError, data: uploadData },
-  ] = useMutation(UPLOAD_IMAGES);
-  let addedImages = [];
+  const [upload, { loading: serverFilesUploading }] = useMutation(UPLOAD_IMAGES, {
+    update: (cache, { data: { addimages: addedImages } }) => {
+      const { business } = cache.readQuery({
+        query: QUERY_IMAGES,
+        variables: { user: user.id, business: id }
+      });
 
-  if (loading) return null;
-
-  if (uploadData) {
-    addedImages = uploadData.addimages;
-    if (uploading) { setUploading(false); }
-  }
-
-  console.log('upload error: ');
-  console.log(uploadError);
-  console.log('error: ');
-  console.log(error);
-  console.log('data: ');
-  console.log(data);
-
-  const {
-    business: {
-      images: businessImages, shortname, longname, owner,
+      cache.writeQuery({
+        query: QUERY_IMAGES,
+        variables: { user: user.id, business: id },
+        data: {
+          business: { ...business, images: [...addedImages, ...business.images] },
+        }
+      });
     }
-  } = data;
-  const images = [...addedImages, ...businessImages]
+  });
+
+  const uploading = clientFilesUploading || serverFilesUploading;
+
+  let images = [];
+  let shortname;
+  let longname;
+  let owner;
+
+  if (data) {
+    const { business } = data;
+
+    images = business.images;
+    shortname = business.shortname;
+    longname = business.longname;
+    owner = business.owner;
+  }
 
   return (
     <Layout
       mode={mode}
-      appbar={(className) => (
-        <AppBar
-          classes={{ root: className }}
-          mode={mode}
-          flat={mode === 'edit' || images.length > 0}
-          shortname={shortname}
-          longname={longname}
-          owner={user.id === owner}
-          toggleMode={() => {
-            if (mode === 'view') {
-              setMode('edit');
-            } else if (mode === 'edit') {
-              setMode('view');
-            }
-          }}
-          back={() => {
-            history.goBack(-1);
-          }}
-        />
-      )}
-      gallery={(className) => (
-        <Gallery
-          classes={{ root: className }}
-          uploading={uploading}
-          mode={mode}
-          alt={`Image de galerie de ${shortname}`}
-          images={images}
-          onUploadStart={() => setUploading(true)}
-          onFileUploaded={(event) => {
-            upload({
-              variables: {
-                user: user.id,
-                business: id,
-                images: event.target.files,
-              },
-            });
-          }}
-        />
-      )}
+      appbar={(className) => {
+        if (loading) return <AppBarSkeleton classes={{ root: className }} />;
+
+        return (
+          <AppBar
+            classes={{ root: className }}
+            mode={mode}
+            flat={mode === 'edit' || images.length > 0}
+            shortname={shortname}
+            longname={longname}
+            owner={user.id === owner}
+            toggleMode={() => {
+              if (mode === 'view') {
+                setMode('edit');
+              } else if (mode === 'edit') {
+                setMode('view');
+              }
+            }}
+            back={() => {
+              history.push('/');
+            }}
+          />
+        );
+      }}
+      gallery={(className) => {
+        if (loading) return <GallerySkeleton classes={{ root: className }} />;
+
+        return (
+          <Gallery
+            classes={{ root: className }}
+            uploading={uploading}
+            id={id}
+            mode={mode}
+            alt={`Image de galerie de ${shortname}`}
+            images={images}
+            onUploadStart={() => { setClientFilesUploading(true); }}
+            onFileUploaded={(event) => {
+              setClientFilesUploading(false);
+              upload({
+                variables: {
+                  user: user.id,
+                  business: id,
+                  images: event.target.files,
+                },
+              });
+            }}
+          />
+        );
+      }}
     />
   );
 };
@@ -96,6 +129,8 @@ const Business = (props) => {
 Business.propTypes = {
   history: PropTypes.shape({
     goBack: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+    length: PropTypes.number.isRequired,
   }).isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({

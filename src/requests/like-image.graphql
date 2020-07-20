@@ -1,0 +1,7 @@
+mutation likeImage($user: ID!, $business: ID!, $image: ID!) {
+  likeimage(user: $user, business: $business, image: $image) {
+    id
+    liked
+    likes
+  }
+}

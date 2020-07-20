@@ -1,5 +1,6 @@
 mutation uploadImages($user: ID!, $business: ID!, $images: [Upload!]!) {
   addimages(user: $user, business: $business, images: $images) {
+    id
     src
     liked
     likes

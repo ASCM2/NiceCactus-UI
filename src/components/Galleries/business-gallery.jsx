@@ -1,6 +1,11 @@
+/* global localStorage: false */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+
+import { loader } from 'graphql.macro';
+import { gql } from '@apollo/client';
+import { useMutation } from '@apollo/react-hooks';
 
 import Paper from '@material-ui/core/Paper';
 
@@ -63,22 +68,74 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const LIKE_IMAGE = loader('../../requests/like-image.graphql');
+const DISLIKE_IMAGE = loader('../../requests/dislike-image.graphql');
+const DELETE_IMAGE = loader('../../requests/delete-image.graphql');
+const QUERY_IMAGES = gql`
+  query queryImages($user: ID!, $business: ID!) {
+    business(user: $user, id: $business) {
+      images {
+        id
+        src
+        liked
+        likes
+      }
+    }
+  }
+`;
+
+let deletedImage;
 const BusinessGallery = (props) => {
+  const user = JSON.parse(localStorage.user);
+  const connected = Boolean(user.roles.find((role) => role === 'user'));
+
   const {
+    id: businessId,
     mode, alt, images, uploading,
     onUploadStart, onFileUploaded,
     ...rest
   } = props;
   const [itemsLoaded, setItemsLoaded] = useState(0);
+
+  const [like] = useMutation(LIKE_IMAGE);
+  const [dislike] = useMutation(DISLIKE_IMAGE);
+  const [deleteImage] = useMutation(DELETE_IMAGE, {
+    update: (cache) => {
+      const { business } = cache.readQuery({
+        query: QUERY_IMAGES,
+        variables: { user: user.id, business: businessId }
+      });
+      const filteredImages = business.images.filter(({ id: imageId }) => imageId !== deletedImage);
+
+      cache.writeQuery({
+        query: QUERY_IMAGES,
+        variables: { user: user.id, business: businessId },
+        data: {
+          business: { ...business, images: filteredImages },
+        }
+      });
+    }
+  });
   const Images = images.map(({
-    src, liked, likes,
+    id, src, liked, likes,
   }) => (
     <Image
+      connected={connected}
       mode={mode}
       alt={alt}
       src={src}
       liked={liked}
       likes={likes}
+      onLike={() => { like({ variables: { user: user.id, business: businessId, image: id } }); }}
+      onDislike={
+        () => { dislike({ variables: { user: user.id, business: businessId, image: id } }); }
+      }
+      onDelete={
+        () => {
+          deletedImage = id;
+          deleteImage({ variables: { user: user.id, business: businessId, image: id } });
+        }
+      }
       onLoad={() => { setItemsLoaded(itemsLoaded + 1); }}
     />
   ));
@@ -140,9 +197,11 @@ const BusinessGallery = (props) => {
 };
 
 BusinessGallery.propTypes = {
+  id: PropTypes.string.isRequired,
   mode: PropTypes.oneOf(['view', 'edit']),
   alt: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
     src: PropTypes.string.isRequired,
     liked: PropTypes.bool,
     likes: PropTypes.number.isRequired,

@@ -3,8 +3,9 @@ query queryBusiness($user: ID!, $business: ID!) {
     shortname
     longname
     images {
+      id
       src
-      likes
+      liked
       likes
     }
     owner
