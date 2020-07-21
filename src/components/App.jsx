@@ -16,6 +16,7 @@ import green from '@material-ui/core/colors/green';
 
 import Home from './Pages/home';
 import CreateBusiness from './Pages/create-business';
+import UpdateBusiness from './Pages/update-business';
 import Business from './Pages/business';
 
 
@@ -34,7 +35,7 @@ const theme = createMuiTheme({
   },
 });
 
-localStorage.user = JSON.stringify({ id: '517f1f78bcf86cd799439012', roles: ['user'], name: 'user' });
+localStorage.user = JSON.stringify({ id: '517f1f78bcf86cd799439011', roles: ['user'], name: 'user' });
 
 const App = () => (
   <ApolloProvider client={client}>
@@ -44,6 +45,7 @@ const App = () => (
         <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/create" exact component={CreateBusiness} />
+          <Route path="/:id/update" exact component={UpdateBusiness} />
           <Route path="/:id" exact component={Business} />
           <Route component={() => <h1>404 Not Found.</h1>} />
         </Switch>

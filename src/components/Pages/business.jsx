@@ -1,6 +1,14 @@
 /* global localStorage: false */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
+
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+
+import EditIcon from '@material-ui/icons/Edit';
+
+import { useTheme } from '@material-ui/core/styles';
 
 import { loader } from 'graphql.macro';
 import { gql } from '@apollo/client';
@@ -38,8 +46,11 @@ const QUERY_IMAGES = gql`
 const Business = (props) => {
   const user = JSON.parse(localStorage.user);
   const connected = Boolean(user.roles.find((role) => role === 'user'));
+  const editBasicsInfosLabel = 'Modifier les informations de base';
 
+  const theme = useTheme();
   const { match: { params: { id } }, history } = props;
+  const [redirectUpdateBasics, setRedirectUpdateBasics] = useState(false);
   const [mode, setMode] = useState('view');
   const [tab, setTab] = useState('presentation');
   const [clientFilesUploading, setClientFilesUploading] = useState(false);
@@ -76,6 +87,13 @@ const Business = (props) => {
   let category;
   let shortname;
   let longname;
+  let smalldescription;
+  let address;
+  let postalCode;
+  let city;
+  let country;
+  let latitude;
+  let longitude;
   let follower;
   let followers;
   let liked;
@@ -90,11 +108,44 @@ const Business = (props) => {
     category = business.category;
     shortname = business.shortname;
     longname = business.longname;
+    smalldescription = business.smalldescription;
+    address = business.address;
+    postalCode = business.postalCode;
+    city = business.city;
+    country = business.country;
+    latitude = business.location.lat;
+    longitude = business.location.lng;
     follower = business.follower;
     followers = business.followersNumber;
     liked = business.liked;
     likes = business.likes;
     owner = business.owner;
+  }
+
+  if (redirectUpdateBasics) {
+    return (
+      <Redirect
+        push
+        to={{
+          pathname: `/${id}/update`,
+          state: {
+            id,
+            image: image || { src: null },
+            category,
+            shortname,
+            longname,
+            smalldescription,
+            address,
+            postalCode,
+            city,
+            country,
+            latitude,
+            longitude,
+            owner,
+          }
+        }}
+      />
+    );
   }
 
   return (
@@ -149,6 +200,20 @@ const Business = (props) => {
           />
         );
       }}
+      subappbar={(className) => (
+        <div className={className}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setRedirectUpdateBasics(true)}
+          >
+            <EditIcon />
+            <Typography style={{ marginLeft: theme.spacing(1) }} variant="inherit">
+              {editBasicsInfosLabel}
+            </Typography>
+          </Button>
+        </div>
+      )}
       header={(className) => {
         if (loading) {
           return (

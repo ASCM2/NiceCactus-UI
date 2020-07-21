@@ -7,6 +7,15 @@ query queryBusiness($user: ID!, $business: ID!) {
     category
     shortname
     longname
+    smalldescription
+    address
+    postalCode
+    city
+    country
+    location {
+      lat
+      lng
+    }
     images {
       id
       src

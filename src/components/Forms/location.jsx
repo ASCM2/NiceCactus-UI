@@ -153,7 +153,7 @@ const cityDescription = `
 const Location = React.forwardRef((props, ref) => {
   const theme = useTheme();
   const {
-    transitionStyles,
+    transitionStyles, update,
     fullAddress, address, postalCode,
     city, country, suggestions, errors,
     latitude, longitude, submitting,
@@ -376,7 +376,7 @@ const Location = React.forwardRef((props, ref) => {
             variant="contained"
             onClick={submit}
           >
-            CREER VOTRE PAGE
+            {update ? 'METTRE A JOUR' : 'CREER VOTRE PAGE'}
           </Button>
         </div>
       </CardActions>
@@ -385,6 +385,7 @@ const Location = React.forwardRef((props, ref) => {
 });
 
 Location.propTypes = {
+  update: PropTypes.bool,
   /*
     Styles appliqués à l'élément racine afin d'effectuer
     une transition du composant.
@@ -477,6 +478,7 @@ Location.propTypes = {
 };
 
 Location.defaultProps = {
+  update: false,
   /*
     Par défaut, on considère qu'aucun style de transition n'est appliqué
     à l'élément racine.

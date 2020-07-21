@@ -47,6 +47,8 @@ const useStyles = makeStyles((theme) => ({
   subappbar: {
     gridArea: 'subappbar',
     marginTop: theme.spacing(5),
+    display: 'flex',
+    justifyContent: 'center',
   },
   header: {
     gridArea: 'header',
