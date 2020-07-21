@@ -11,13 +11,20 @@ import AppBarSkeleton from '../Skeletons/business-appbar';
 import Layout from '../Layouts/business';
 import Gallery from '../Galleries/business-gallery';
 import GallerySkeleton from '../Skeletons/business-gallery';
+import Header from '../Headers/header';
+import HeaderSkeleton from '../Skeletons/header';
 
 
 const QUERY_BUSINESS = loader('../../requests/query-business.graphql');
+const FOLLOW_BUSINESS = loader('../../requests/follow-business.graphql');
+const UNSUBSCRIBE_BUSINESS = loader('../../requests/unsubscribe-business.graphql');
+const LIKE_BUSINESS = loader('../../requests/like-business.graphql');
+const DISLIKE_BUSINESS = loader('../../requests/dislike-business.graphql');
 const UPLOAD_IMAGES = loader('../../requests/upload-images.graphql');
 const QUERY_IMAGES = gql`
   query queryImages($user: ID!, $business: ID!) {
     business(user: $user, id: $business) {
+      id
       images {
         id
         src
@@ -30,9 +37,11 @@ const QUERY_IMAGES = gql`
 
 const Business = (props) => {
   const user = JSON.parse(localStorage.user);
+  const connected = Boolean(user.roles.find((role) => role === 'user'));
 
   const { match: { params: { id } }, history } = props;
   const [mode, setMode] = useState('view');
+  const [tab, setTab] = useState('presentation');
   const [clientFilesUploading, setClientFilesUploading] = useState(false);
   const {
     loading, data,
@@ -53,20 +62,38 @@ const Business = (props) => {
       });
     }
   });
+  const [subscribe] = useMutation(FOLLOW_BUSINESS);
+  const [unsubscribe] = useMutation(UNSUBSCRIBE_BUSINESS);
+  const [like] = useMutation(LIKE_BUSINESS);
+  const [dislike] = useMutation(DISLIKE_BUSINESS);
+
+  const onTabSelected = (tabSelected) => setTab(tabSelected);
 
   const uploading = clientFilesUploading || serverFilesUploading;
 
+  let image = {};
   let images = [];
+  let category;
   let shortname;
   let longname;
+  let follower;
+  let followers;
+  let liked;
+  let likes;
   let owner;
 
   if (data) {
     const { business } = data;
 
+    image = business.image;
     images = business.images;
+    category = business.category;
     shortname = business.shortname;
     longname = business.longname;
+    follower = business.follower;
+    followers = business.followersNumber;
+    liked = business.liked;
+    likes = business.likes;
     owner = business.owner;
   }
 
@@ -119,6 +146,38 @@ const Business = (props) => {
                 },
               });
             }}
+          />
+        );
+      }}
+      header={(className) => {
+        if (loading) {
+          return (
+            <HeaderSkeleton
+              classes={{ root: className }}
+              tab={tab}
+              onTabSelected={onTabSelected}
+            />
+          );
+        }
+
+        return (
+          <Header
+            classes={{ root: className }}
+            connected={connected}
+            alt={`Image principale de ${shortname}`}
+            src={image ? image.src : null}
+            category={category}
+            longname={longname}
+            follower={follower}
+            followers={followers}
+            liked={liked}
+            likes={likes}
+            tab={tab}
+            onSubscribe={() => { subscribe({ variables: { user: user.id, business: id } }); }}
+            onUnsubscribe={() => { unsubscribe({ variables: { user: user.id, business: id } }); }}
+            onLike={() => { like({ variables: { user: user.id, business: id } }); }}
+            onDislike={() => { dislike({ variables: { user: user.id, business: id } }); }}
+            onTabSelected={onTabSelected}
           />
         );
       }}

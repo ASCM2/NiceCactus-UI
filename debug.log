@@ -2,3 +2,4 @@
 [0705/210212.297:WARNING:minidump_to_upload_parameters.cc(36)] duplicate key guid, discarding value 566da9cf-e11d-4db9-83d7-187023ebc983
 [0706/152320.896:WARNING:minidump_to_upload_parameters.cc(36)] duplicate key guid, discarding value 566da9cf-e11d-4db9-83d7-187023ebc983
 [0706/152707.626:WARNING:minidump_to_upload_parameters.cc(36)] duplicate key guid, discarding value 566da9cf-e11d-4db9-83d7-187023ebc983
+[0721/070331.292:ERROR:settings.cc(401)] Settings magic is not 1129342067

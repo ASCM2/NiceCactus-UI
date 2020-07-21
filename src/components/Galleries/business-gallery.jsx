@@ -74,6 +74,7 @@ const DELETE_IMAGE = loader('../../requests/delete-image.graphql');
 const QUERY_IMAGES = gql`
   query queryImages($user: ID!, $business: ID!) {
     business(user: $user, id: $business) {
+      id
       images {
         id
         src
