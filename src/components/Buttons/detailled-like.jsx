@@ -19,8 +19,16 @@ import IconButton from '@material-ui/core/IconButton';
 
 import FavoriteIcon from '@material-ui/icons/Favorite';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
+import { makeStyles, createMuiTheme } from '@material-ui/core/styles';
+import red from '@material-ui/core/colors/red';
 
+
+const theme = createMuiTheme({
+  palette: {
+    secondary: red,
+  },
+});
 
 const useStyles = makeStyles({
   root: {
@@ -45,14 +53,16 @@ const LikeButton = (props) => {
   const onLikeAction = liked ? onDislike : onLike;
 
   return (
-    <span className={classes.root}>
-      <IconButton onClick={connected ? onLikeAction : askSignIn} aria-label="Like">
-        {like ? <FavoriteIcon color="secondary" /> : <FavoriteIcon style={{ color: '#fff' }} />}
-      </IconButton>
-      <Typography className={classes.likes} variant="subtitle1" component="span" color="inherited">
-        {likes}
-      </Typography>
-    </span>
+    <ThemeProvider theme={theme}>
+      <span className={classes.root}>
+        <IconButton onClick={connected ? onLikeAction : askSignIn} aria-label="Like">
+          {like ? <FavoriteIcon color="secondary" /> : <FavoriteIcon style={{ color: '#fff' }} />}
+        </IconButton>
+        <Typography className={classes.likes} variant="subtitle1" component="span" color="inherited">
+          {likes}
+        </Typography>
+      </span>
+    </ThemeProvider>
   );
 };
 

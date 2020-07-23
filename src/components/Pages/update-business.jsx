@@ -15,7 +15,7 @@ import Fade from '@material-ui/core/Fade';
 
 import CreateBusinessLayout from '../Layouts/create-business';
 import CreateBusinessAnimation from '../Animations/create-business';
-import Appbar from '../AppBars/create-business';
+import Appbar from '../AppBars/update-business';
 import Basics from '../Forms/basics';
 import Location from '../Forms/location';
 
@@ -48,9 +48,6 @@ const UpdateBusiness = (props) => {
     }
   } = props;
 
-  console.log('owner: ');
-  console.log(owner);
-
   const [step, setStep] = useState('basics');
 
   const onPrev = () => { setStep('basics'); };
@@ -75,8 +72,6 @@ const UpdateBusiness = (props) => {
   const [latitude, setLatitude] = useState(defaultLatitude);
   const [longitude, setLongitude] = useState(defaultLongitude);
 
-  const [redirectToHomePage, setRedirectToHomePage] = useState(false);
-
   const [errors, setErrors] = useState({});
 
   const [update, { loading, error, data }] = useMutation(UPDATE_BUSINESS);
@@ -94,7 +89,14 @@ const UpdateBusiness = (props) => {
     }
   }
 
-  if (data) { setTimeout(setRedirectToHomePage, 1000, true); }
+  if (data) {
+    return (
+      <Redirect
+        push
+        to={{ pathname: `/${id}`, state: { reload: true, mode: 'edit' } }}
+      />
+    );
+  }
 
   let timeout = null;
   const onChange = (event) => {
@@ -185,6 +187,7 @@ const UpdateBusiness = (props) => {
         appbar={(className) => (
           <Appbar
             classes={{ root: className }}
+            id={id}
             step={step}
           />
         )}
@@ -282,7 +285,6 @@ const UpdateBusiness = (props) => {
           />
         )}
       />
-      {redirectToHomePage && <Redirect push to="/" />}
     </>
   );
 };

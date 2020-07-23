@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
         '. body . promoted .'
         '. body . . .'
       `,
-      gridTemplateColumns: 'minmax(10px, 10%) minmax(410px, 1fr) 10px 450px minmax(10px, 10%)',
+      gridTemplateColumns: 'minmax(10px, 7%) minmax(410px, 1fr) 10px 320px minmax(10px, 7%)',
     },
     [theme.breakpoints.only('sm')]: {
       gridTemplateAreas: `

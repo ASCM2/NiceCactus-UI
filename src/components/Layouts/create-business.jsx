@@ -10,8 +10,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Paper from '@material-ui/core/Paper';
-
 import { makeStyles } from '@material-ui/core/styles';
 
 
@@ -76,11 +74,4 @@ CreateBusinessLayout.propTypes = {
   content: PropTypes.func.isRequired,
 };
 
-export default (props) => (
-  <CreateBusinessLayout
-    appbar={(className) => <Paper square style={{ height: 50 }} classes={{ root: className }} />}
-    header={(className) => <Paper square style={{ height: 50 }} classes={{ root: className }} />}
-    content={(className) => <Paper square style={{ height: 500 }} classes={{ root: className }} />}
-    {...props}
-  />
-);
+export default CreateBusinessLayout;

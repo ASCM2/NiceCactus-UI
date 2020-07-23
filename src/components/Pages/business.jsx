@@ -21,6 +21,8 @@ import Gallery from '../Galleries/business-gallery';
 import GallerySkeleton from '../Skeletons/business-gallery';
 import Header from '../Headers/header';
 import HeaderSkeleton from '../Skeletons/header';
+import Presentation from '../Sections/presentation';
+import PresentationSkeleton from '../Skeletons/presentation';
 
 
 const QUERY_BUSINESS = loader('../../requests/query-business.graphql');
@@ -49,14 +51,32 @@ const Business = (props) => {
   const editBasicsInfosLabel = 'Modifier les informations de base';
 
   const theme = useTheme();
-  const { match: { params: { id } }, history } = props;
+  const {
+    match: { params: { id } },
+    history,
+    location: {
+      state,
+    },
+  } = props;
+  let reload;
+  let defaultMode;
+
+  if (state) {
+    reload = state.reload;
+    defaultMode = state.mode;
+  }
+
   const [redirectUpdateBasics, setRedirectUpdateBasics] = useState(false);
-  const [mode, setMode] = useState('view');
+  const [redirectCreatePresentation, setRedirectCreatePresentation] = useState(false);
+  const [mode, setMode] = useState(defaultMode || 'view');
   const [tab, setTab] = useState('presentation');
   const [clientFilesUploading, setClientFilesUploading] = useState(false);
   const {
     loading, data,
-  } = useQuery(QUERY_BUSINESS, { variables: { user: user.id, business: id } });
+  } = useQuery(QUERY_BUSINESS, {
+    variables: { user: user.id, business: id },
+    fetchPolicy: reload ? 'network-only' : 'cache-first',
+  });
   const [upload, { loading: serverFilesUploading }] = useMutation(UPLOAD_IMAGES, {
     update: (cache, { data: { addimages: addedImages } }) => {
       const { business } = cache.readQuery({
@@ -82,12 +102,15 @@ const Business = (props) => {
 
   const uploading = clientFilesUploading || serverFilesUploading;
 
+  let icon;
+  let logo;
   let image = {};
   let images = [];
   let category;
   let shortname;
   let longname;
   let smalldescription;
+  let description;
   let address;
   let postalCode;
   let city;
@@ -103,12 +126,15 @@ const Business = (props) => {
   if (data) {
     const { business } = data;
 
+    icon = business.icon;
+    logo = business.logo;
     image = business.image;
     images = business.images;
     category = business.category;
     shortname = business.shortname;
     longname = business.longname;
     smalldescription = business.smalldescription;
+    description = business.description;
     address = business.address;
     postalCode = business.postalCode;
     city = business.city;
@@ -147,6 +173,8 @@ const Business = (props) => {
       />
     );
   }
+
+  if (redirectCreatePresentation) return <Redirect push to={`/${id}/create-presentation`} />;
 
   return (
     <Layout
@@ -246,11 +274,49 @@ const Business = (props) => {
           />
         );
       }}
+      body={(className) => {
+        switch (tab) {
+          case 'presentation':
+            if (loading) {
+              return (
+                <PresentationSkeleton classes={{ root: className }} />
+              );
+            }
+
+            return (
+              <Presentation
+                classes={{ root: className }}
+                owner={user.id === owner}
+                mode={mode}
+                icon={{
+                  alt: `Icône de ${shortname}`,
+                  src: icon ? icon.src : null,
+                }}
+                shortname={shortname}
+                logo={{
+                  alt: `Logo de ${shortname}`,
+                  src: logo ? logo.src : null,
+                }}
+                description={description || ''}
+                create={() => setRedirectCreatePresentation(true)}
+                modify={() => {}}
+              />
+            );
+          default:
+            return null;
+        }
+      }}
     />
   );
 };
 
 Business.propTypes = {
+  location: PropTypes.shape({
+    state: PropTypes.shape({
+      reload: PropTypes.bool,
+      mode: PropTypes.string,
+    }).isRequired,
+  }).isRequired,
   history: PropTypes.shape({
     goBack: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,

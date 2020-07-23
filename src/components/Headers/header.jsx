@@ -215,9 +215,9 @@ const Header = (props) => {
         >
           <Tab label="PRESENTATION" />
           <Tab label={`PAGES RELIEES (${relatedNumber})`} />
-          <Tab label={`POSTS (${postsNumber})`} />
           <Tab label={`PHOTOS (${imagesNumber})`} />
           <Tab label={`ARRETS (${stopsNumber})`} />
+          <Tab label={`POSTS (${postsNumber})`} />
         </Tabs>
       </div>
     </Paper>
