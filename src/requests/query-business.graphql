@@ -1,6 +1,9 @@
 query queryBusiness($user: ID!, $business: ID!) {
   business(user: $user, id: $business) {
     id
+    logo {
+      src
+    }
     image {
       src
     }
@@ -8,6 +11,7 @@ query queryBusiness($user: ID!, $business: ID!) {
     shortname
     longname
     smalldescription
+    description
     address
     postalCode
     city
