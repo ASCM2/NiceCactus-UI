@@ -19,6 +19,7 @@ import CreateBusiness from './Pages/create-business';
 import UpdateBusiness from './Pages/update-business';
 import Business from './Pages/business';
 import CreatePresentation from './Pages/create-presentation';
+import UpdatePresentation from './Pages/update-presentation';
 
 
 const client = new ApolloClient({
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/:id/update" exact component={UpdateBusiness} />
           <Route path="/:id" exact component={Business} />
           <Route path="/:id/create-presentation" exact component={CreatePresentation} />
+          <Route path="/:id/update-presentation" exact component={UpdatePresentation} />
           <Route component={() => <h1>404 Not Found.</h1>} />
         </Switch>
       </BrowserRouter>

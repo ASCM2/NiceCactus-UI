@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 const CreatePresentationAppBar = (props) => {
   const { id, ...rest } = props;
   const classes = useStyles({ ...rest });
-  const header = 'Présentez-vous aux visiteurs de votre page';
+  const header = 'Présentation';
 
   return (
     <AppBar

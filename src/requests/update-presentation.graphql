@@ -1,0 +1,11 @@
+mutation updatePresentation($user: ID!, $business: ID!, $logo: Upload, $description: String!) {
+  updatepresentation(user: $user, business: $business, presentation: { logo: $logo, description: $description }) {
+    id
+    logo {
+      name
+      contentType
+      src
+    }
+    description
+  }
+}

@@ -68,6 +68,7 @@ const Business = (props) => {
 
   const [redirectUpdateBasics, setRedirectUpdateBasics] = useState(false);
   const [redirectCreatePresentation, setRedirectCreatePresentation] = useState(false);
+  const [redirectUpdatePresentation, setRedirectUpdatePresentation] = useState(false);
   const [mode, setMode] = useState(defaultMode || 'view');
   const [tab, setTab] = useState('presentation');
   const [clientFilesUploading, setClientFilesUploading] = useState(false);
@@ -175,6 +176,18 @@ const Business = (props) => {
   }
 
   if (redirectCreatePresentation) return <Redirect push to={`/${id}/create-presentation`} />;
+
+  if (redirectUpdatePresentation) {
+    return (
+      <Redirect
+        push
+        to={{
+          pathname: `/${id}/update-presentation`,
+          state: { logo, description },
+        }}
+      />
+    );
+  }
 
   return (
     <Layout
@@ -299,7 +312,7 @@ const Business = (props) => {
                 }}
                 description={description || ''}
                 create={() => setRedirectCreatePresentation(true)}
-                modify={() => {}}
+                modify={() => setRedirectUpdatePresentation(true)}
               />
             );
           default:
