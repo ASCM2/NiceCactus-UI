@@ -49,6 +49,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(5),
     display: 'flex',
     justifyContent: 'center',
+    '& > *': {
+      marginRight: 10,
+    },
   },
   header: {
     gridArea: 'header',

@@ -1,0 +1,9 @@
+mutation addIcon($user: ID!, $business: ID!, $icon: Upload!) {
+  addicon(user: $user, business: $business, icon: $icon) {
+    id
+    icon {
+      id
+      src
+    }
+  }
+}

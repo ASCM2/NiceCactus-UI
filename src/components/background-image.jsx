@@ -29,7 +29,7 @@ const BackgroundImage = (props) => {
   const ersatz = new Image();
 
   ersatz.src = src;
-  ersatz.onload = () => { setLoading(false); };
+  ersatz.onload = () => { setError(false); setLoading(false); };
   ersatz.onerror = () => { setError(true); onError(); };
 
   return (

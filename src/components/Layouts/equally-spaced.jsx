@@ -23,8 +23,10 @@ const getColumnLine = (rows, cols, index) => (index % cols) + 1;
 const EquallySpacedLayout = withSize()((props) => {
   const {
     column, gap, items,
-    size: { width }, ...rest
+    size: { width }, onWidthComputed,
+    ...rest
   } = props;
+
   const number = items.length;
 
   if (column <= 0 || number === 0) return null;

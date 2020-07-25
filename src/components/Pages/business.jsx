@@ -19,10 +19,13 @@ import AppBarSkeleton from '../Skeletons/business-appbar';
 import Layout from '../Layouts/business';
 import Gallery from '../Galleries/business-gallery';
 import GallerySkeleton from '../Skeletons/business-gallery';
+import UploadIconButton from '../Buttons/upload-icon';
 import Header from '../Headers/header';
 import HeaderSkeleton from '../Skeletons/header';
 import Presentation from '../Sections/presentation';
 import PresentationSkeleton from '../Skeletons/presentation';
+import Related from '../Sections/related';
+import RelatedSkeleton from '../Skeletons/related-businesses';
 
 
 const QUERY_BUSINESS = loader('../../requests/query-business.graphql');
@@ -31,6 +34,7 @@ const UNSUBSCRIBE_BUSINESS = loader('../../requests/unsubscribe-business.graphql
 const LIKE_BUSINESS = loader('../../requests/like-business.graphql');
 const DISLIKE_BUSINESS = loader('../../requests/dislike-business.graphql');
 const UPLOAD_IMAGES = loader('../../requests/upload-images.graphql');
+const ADD_ICON = loader('../../requests/add-icon.graphql');
 const QUERY_IMAGES = gql`
   query queryImages($user: ID!, $business: ID!) {
     business(user: $user, id: $business) {
@@ -40,6 +44,17 @@ const QUERY_IMAGES = gql`
         src
         liked
         likes
+      }
+    }
+  }
+`;
+const QUERY_ICON = gql`
+  query queryIcon($user: ID!, $business: ID!) {
+    business(user: $user, id: $business) {
+      id
+      icon {
+        id
+        src
       }
     }
   }
@@ -54,12 +69,12 @@ const Business = (props) => {
   const {
     match: { params: { id } },
     history,
-    location: {
-      state,
-    },
+    location,
   } = props;
   let reload;
   let defaultMode;
+
+  const { state } = location;
 
   if (state) {
     reload = state.reload;
@@ -70,8 +85,9 @@ const Business = (props) => {
   const [redirectCreatePresentation, setRedirectCreatePresentation] = useState(false);
   const [redirectUpdatePresentation, setRedirectUpdatePresentation] = useState(false);
   const [mode, setMode] = useState(defaultMode || 'view');
-  const [tab, setTab] = useState('presentation');
+  const [tab, setTab] = useState('related');
   const [clientFilesUploading, setClientFilesUploading] = useState(false);
+  const [clientIconUploading, setClientIconUploading] = useState(false);
   const {
     loading, data,
   } = useQuery(QUERY_BUSINESS, {
@@ -98,15 +114,33 @@ const Business = (props) => {
   const [unsubscribe] = useMutation(UNSUBSCRIBE_BUSINESS);
   const [like] = useMutation(LIKE_BUSINESS);
   const [dislike] = useMutation(DISLIKE_BUSINESS);
+  const [addicon, { loading: serverIconUploading }] = useMutation(ADD_ICON, {
+    update: (cache, { data: { addicon: { icon: addedIcon } } }) => {
+      const { business } = cache.readQuery({
+        query: QUERY_ICON,
+        variables: { user: user.id, business: id }
+      });
+
+      cache.writeQuery({
+        query: QUERY_ICON,
+        variables: { user: user.id, business: id },
+        data: {
+          business: { ...business, icon: addedIcon },
+        }
+      });
+    }
+  });
 
   const onTabSelected = (tabSelected) => setTab(tabSelected);
 
   const uploading = clientFilesUploading || serverFilesUploading;
+  const uploadIcon = clientIconUploading || serverIconUploading;
 
   let icon;
   let logo;
   let image = {};
   let images = [];
+  let related = [];
   let category;
   let shortname;
   let longname;
@@ -131,6 +165,7 @@ const Business = (props) => {
     logo = business.logo;
     image = business.image;
     images = business.images;
+    related = business.related;
     category = business.category;
     shortname = business.shortname;
     longname = business.longname;
@@ -205,8 +240,20 @@ const Business = (props) => {
             owner={user.id === owner}
             toggleMode={() => {
               if (mode === 'view') {
+                if (state) {
+                  history.replace(location.pathname, { ...state, mode: 'edit', reload: false });
+                } else {
+                  history.replace(location.pathname, { mode: 'edit', reload: false });
+                }
+
                 setMode('edit');
               } else if (mode === 'edit') {
+                if (state) {
+                  history.replace(location.pathname, { ...state, mode: 'view', reload: true });
+                } else {
+                  history.replace(location.pathname, { mode: 'view', reload: true });
+                }
+
                 setMode('view');
               }
             }}
@@ -243,6 +290,21 @@ const Business = (props) => {
       }}
       subappbar={(className) => (
         <div className={className}>
+          <UploadIconButton
+            image={Boolean(icon)}
+            uploading={uploadIcon}
+            onUploadStart={() => setClientIconUploading(true)}
+            onFileUploaded={(event) => {
+              setClientIconUploading(false);
+              addicon({
+                variables: {
+                  user: user.id,
+                  business: id,
+                  icon: event.target.files[0]
+                }
+              });
+            }}
+          />
           <Button
             variant="contained"
             color="primary"
@@ -315,6 +377,20 @@ const Business = (props) => {
                 modify={() => setRedirectUpdatePresentation(true)}
               />
             );
+          case 'related':
+            if (loading) {
+              return <RelatedSkeleton classes={{ root: className }} />;
+            }
+
+            return (
+              <Related
+                classes={{ root: className }}
+                id={id}
+                mode={mode}
+                owner={user.id === owner}
+                related={related}
+              />
+            );
           default:
             return null;
         }
@@ -325,12 +401,14 @@ const Business = (props) => {
 
 Business.propTypes = {
   location: PropTypes.shape({
+    pathname: PropTypes.string.isRequired,
     state: PropTypes.shape({
       reload: PropTypes.bool,
       mode: PropTypes.string,
     }).isRequired,
   }).isRequired,
   history: PropTypes.shape({
+    replace: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     length: PropTypes.number.isRequired,

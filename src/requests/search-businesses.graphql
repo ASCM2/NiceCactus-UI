@@ -10,6 +10,7 @@ query searchBusinesses($user: ID!, $term: String!, $after: ID, $number: Int!, $c
       }
       category
       shortname
+      longname
       smalldescription
       address
       postalCode

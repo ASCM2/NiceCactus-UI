@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
+import AddIcon from '@material-ui/icons/AddAPhoto';
 import Typography from '@material-ui/core/Typography';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,20 +23,19 @@ const useStyles = makeStyles((theme) => ({
 
 const Upload = (props) => {
   const {
-    uploading, onUploadStart, onFileUploaded,
-    ...rest
+    image, uploading, onUploadStart,
+    onFileUploaded, ...rest
   } = props;
   const classes = useStyles({ ...rest });
-  const label = 'Ajouter des images';
+  const label = image ? 'Modifier votre icône' : 'Ajouter une icône';
 
   return (
     <>
       <input
         accept="image/*"
-        multiple
         className={classes.input}
-        id="upload-images-file-input"
-        name="images"
+        id="upload-logo-file-input"
+        name="image"
         type="file"
         onChange={onFileUploaded}
       />
@@ -44,18 +44,19 @@ const Upload = (props) => {
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           className={classes.root}
         >
-          <CircularProgress color="secondary" />
+          <CircularProgress color="primary" />
         </div>
       )}
-      <label htmlFor="upload-images-file-input">
+      <label htmlFor="upload-logo-file-input">
         <Button
           style={{ color: '#fff', display: uploading ? 'none' : undefined }}
           classes={{ root: classes.root }}
           variant="contained"
-          color="secondary"
+          color="primary"
           component="span"
           onClick={onUploadStart}
         >
+          <AddIcon />
           <Typography classes={{ root: classes.label }} variant="inherit">
             {label}
           </Typography>
@@ -66,12 +67,14 @@ const Upload = (props) => {
 };
 
 Upload.propTypes = {
+  image: PropTypes.bool,
   uploading: PropTypes.bool,
   onUploadStart: PropTypes.func.isRequired,
   onFileUploaded: PropTypes.func.isRequired,
 };
 
 Upload.defaultProps = {
+  image: false,
   uploading: false,
 };
 

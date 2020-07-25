@@ -1,6 +1,9 @@
 query queryBusiness($user: ID!, $business: ID!) {
   business(user: $user, id: $business) {
     id
+    icon {
+      src
+    }
     logo {
       src
     }
@@ -25,6 +28,9 @@ query queryBusiness($user: ID!, $business: ID!) {
       src
       liked
       likes
+    }
+    related(user: $user) {
+      id
     }
     follower
     followersNumber
