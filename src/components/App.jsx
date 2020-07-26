@@ -25,7 +25,17 @@ import ManageRelated from './Pages/manage-related';
 
 const client = new ApolloClient({
   link: createUploadLink({ uri: process.env.REACT_APP_BACK_END_URL }),
-  cache: new InMemoryCache()
+  cache: new InMemoryCache({
+    typePolicies: {
+      Business: {
+        fields: {
+          show() {
+            return true;
+          },
+        },
+      },
+    },
+  }),
 });
 
 const theme = createMuiTheme({

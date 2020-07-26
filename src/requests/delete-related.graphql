@@ -1,0 +1,15 @@
+mutation deleteRelated($user: ID!, $business: ID!, $related: ID!) {
+  deleterelated(user: $user, business: $business, related: $related) {
+    id
+    related(user: $user) {
+      id
+      image {
+        src
+      }
+      category
+      promoted
+      shortname
+      smalldescription
+    }
+  }
+}

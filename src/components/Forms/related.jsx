@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -89,73 +88,70 @@ const RelatedForm = (props) => {
   const Icon = businessIcon(category);
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <RelatedFormAnimation
-        show={show}
-        height={height}
-        node={(transitionStyles) => (
-          <Paper
-            style={transitionStyles}
-            className={classes.root}
-            square
-          >
-            <BackgroundImage
-              classes={{ root: classes.media }}
-              alt={image.alt}
-              src={image.src}
-              loading={<Skeleton variant="rect" width="100%" height="100%" />}
-              error={
-                <Portrait classes={{ root: classes.media }} icon={Icon} />
-              }
-            />
-            <div className={classes.content}>
-              <Typography
-                variant="body1"
-                component="div"
-                color="textPrimary"
-                classes={{ root: classes.shortname }}
-              >
-                {shortname}
-              </Typography>
-              <Typography
-                variant="body2"
-                component="div"
-                color="textSecondary"
-                classes={{ root: classes.smalldescription }}
-              >
-                {smalldescription}
-              </Typography>
-            </div>
-            <div className={classes.actions}>
-              <Button
-                color={!promoted ? 'primary' : 'default'}
-                variant="contained"
-                onClick={!promoted ? promote : downgrade}
-              >
-                {!promoted ? (
-                  <FavoriteIcon />
-                ) : (
-                  <ThemeProvider theme={promoteTheme}>
-                    <FavoriteIcon color="primary" />
-                  </ThemeProvider>
-                )}
-                <span style={{ marginLeft: theme.spacing(1) }}>
-                  {!promoted ? promoteLabel : downgradeLabel}
-                </span>
-              </Button>
-              <IconButton
-                style={{ marginLeft: theme.spacing(1) }}
-                aria-label="Delete"
-                onClick={onDelete}
-              >
-                <DeleteIcon color="secondary" />
-              </IconButton>
-            </div>
-          </Paper>
-        )}
-      />
-    </ThemeProvider>
+    <RelatedFormAnimation
+      show={show}
+      height={height}
+      node={(transitionStyles) => (
+        <Paper
+          style={transitionStyles}
+          className={classes.root}
+          square
+        >
+          <BackgroundImage
+            classes={{ root: classes.media }}
+            alt={image.alt}
+            src={image.src}
+            loading={<Skeleton variant="rect" width="100%" height="100%" />}
+            error={
+              <Portrait classes={{ root: classes.media }} icon={Icon} />
+            }
+          />
+          <div className={classes.content}>
+            <Typography
+              variant="body1"
+              component="div"
+              color="textPrimary"
+              classes={{ root: classes.shortname }}
+            >
+              {shortname}
+            </Typography>
+            <Typography
+              variant="body2"
+              component="div"
+              color="textSecondary"
+              classes={{ root: classes.smalldescription }}
+            >
+              {smalldescription}
+            </Typography>
+          </div>
+          <div className={classes.actions}>
+            <Button
+              color={!promoted ? 'primary' : 'default'}
+              variant="contained"
+              onClick={!promoted ? promote : downgrade}
+            >
+              {!promoted ? (
+                <FavoriteIcon />
+              ) : (
+                <ThemeProvider theme={promoteTheme}>
+                  <FavoriteIcon color="primary" />
+                </ThemeProvider>
+              )}
+              <span style={{ marginLeft: theme.spacing(1) }}>
+                {!promoted ? promoteLabel : downgradeLabel}
+              </span>
+            </Button>
+            <IconButton
+              style={{ marginLeft: theme.spacing(1) }}
+              aria-label="Delete"
+              onClick={onDelete}
+            >
+              <DeleteIcon color="secondary" />
+            </IconButton>
+          </div>
+        </Paper>
+      )}
+    />
   );
 };
 

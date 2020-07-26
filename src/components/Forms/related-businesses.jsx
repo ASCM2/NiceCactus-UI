@@ -12,12 +12,16 @@ import { useTheme, makeStyles } from '@material-ui/core/styles';
 
 import InputWithHelp from '../input-with-help';
 import RelatedForm from './related';
+import NoRelated from '../EmptyStates/no-related';
 
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     maxWidth: 960,
+  },
+  emptystate: {
+    marginTop: 75,
   },
   relatedContainer: {
     marginTop: theme.spacing(1),
@@ -46,8 +50,8 @@ const RelatedBusinessesForm = (props) => {
 
   const {
     search, suggestions, related,
-    onChange, onSelect,
-    ...rest
+    onChange, onSelect, onDelete,
+    onPromote, onDowngrade, ...rest
   } = props;
   const classes = useStyles({ ...rest });
 
@@ -78,6 +82,16 @@ const RelatedBusinessesForm = (props) => {
           </List>
         )}
       </Paper>
+      {related.length === 0 && (
+        <NoRelated
+          classes={{ root: classes.emptystate }}
+          header="Vous ne disposez d'aucune page reliée"
+          subheader={`
+            Ajoutez et commentez des pages reliées afin d'améliorer l'intégration
+            des nouveaux étudiants et salariés sur la région.
+          `}
+        />
+      )}
       {related.length > 0 && (
         <div className={classes.relatedContainer}>
           <Typography
@@ -90,6 +104,7 @@ const RelatedBusinessesForm = (props) => {
           </Typography>
           {related.map(
             ({
+              show,
               id,
               shortname,
               smalldescription,
@@ -99,6 +114,7 @@ const RelatedBusinessesForm = (props) => {
               <RelatedForm
                 key={id}
                 classes={{ root: classes.related }}
+                show={show}
                 image={{
                   alt: `Image principale de ${shortname}`,
                   src: image ? image.src : null,
@@ -106,9 +122,9 @@ const RelatedBusinessesForm = (props) => {
                 category={category}
                 shortname={shortname}
                 smalldescription={smalldescription}
-                promote={() => {}}
-                dowgrade={() => {}}
-                onDelete={() => {}}
+                promote={() => onPromote(id)}
+                dowgrade={() => onDowngrade(id)}
+                onDelete={() => onDelete(id)}
               />
             )
           )}
@@ -124,6 +140,9 @@ RelatedBusinessesForm.propTypes = {
   related: PropTypes.arrayOf(PropTypes.shape()),
   onChange: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onPromote: PropTypes.func.isRequired,
+  onDowngrade: PropTypes.func.isRequired,
 };
 
 RelatedBusinessesForm.defaultProps = {

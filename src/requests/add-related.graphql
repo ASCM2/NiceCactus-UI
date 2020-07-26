@@ -1,0 +1,15 @@
+mutation addRelated($user: ID!, $business: ID!, $related: ID!) {
+  addrelated(user: $user, business: $business, related: $related) {
+    id
+    related(user: $user) {
+      id
+      image {
+        src
+      }
+      category
+      promoted
+      shortname
+      smalldescription
+    }
+  }
+}

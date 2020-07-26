@@ -31,6 +31,13 @@ query queryBusiness($user: ID!, $business: ID!) {
     }
     related(user: $user) {
       id
+      image {
+        src
+      }
+      category
+      promoted
+      shortname
+      smalldescription
     }
     follower
     followersNumber
