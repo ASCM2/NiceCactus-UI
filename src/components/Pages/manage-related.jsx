@@ -14,9 +14,12 @@ const SEARCH_BUSINESSES = loader('../../requests/search-businesses.graphql');
 const ADD_RELATED = loader('../../requests/add-related.graphql');
 const DELETE_RELATED = loader('../../requests/delete-related.graphql');
 const QUERY_RELATED = loader('../../requests/query-business.graphql');
+const PROMOTE_RELATED = loader('../../requests/promote-related.graphql');
+const UNPROMOTE_RELATED = loader('../../requests/unpromote-related.graphql');
 
 const numberOfSuggestions = 7;
 let deletedId;
+let promotedId;
 const ManageRelated = (props) => {
   const user = JSON.parse(localStorage.user);
 
@@ -61,6 +64,8 @@ const ManageRelated = (props) => {
       });
     },
   });
+  const [promoteRelated] = useMutation(PROMOTE_RELATED);
+  const [unpromoteRelated] = useMutation(UNPROMOTE_RELATED);
 
   let businesses = [];
   let relatedBusinesses = [];
@@ -82,7 +87,9 @@ const ManageRelated = (props) => {
         clearTimeout(timeout);
 
         timeout = setTimeout(async () => {
-          setSuggestions(businesses.map(({ longname }) => longname));
+          setSuggestions(
+            businesses.map(({ id: businessId, longname }) => ({ id: businessId, longname })),
+          );
         }, 500);
         break;
       default:
@@ -101,16 +108,22 @@ const ManageRelated = (props) => {
             suggestions={suggestions}
             related={relatedBusinesses}
             onChange={onChange}
-            onSelect={(i) => {
+            onSelect={(selectedId) => {
               setSuggestions([]);
-              addRelated({ variables: { user: user.id, business: id, related: businesses[i].id } });
+              addRelated({ variables: { user: user.id, business: id, related: selectedId } });
             }}
             onDelete={(toDeleteId) => {
               deletedId = toDeleteId;
-              deleteRelated({ variables: { user: user.id, business: id, related: toDeleteId } });
+              deleteRelated({ variables: { user: user.id, business: id, related: deletedId } });
             }}
-            onPromote={(promotedId) => {
-              // promoteRelated({ variables: { user: user.id, business: id, related: promotedId } });
+            onPromote={(toPromoteId) => {
+              promotedId = toPromoteId;
+              promoteRelated({ variables: { user: user.id, business: id, related: promotedId } });
+            }}
+            onDowngrade={(downgradedId) => {
+              unpromoteRelated({
+                variables: { user: user.id, business: id, related: downgradedId },
+              });
             }}
           />
         </div>

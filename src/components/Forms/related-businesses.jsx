@@ -74,9 +74,9 @@ const RelatedBusinessesForm = (props) => {
       <Paper className={classes.suggestions} square>
         {suggestions.length > 0 && (
           <List component="nav" aria-label="Search suggestions">
-            {suggestions.map((suggestion, index) => (
-              <ListItem key={suggestion} onClick={() => onSelect(index)} button>
-                <ListItemText primary={suggestion} />
+            {suggestions.map(({ id, longname }) => (
+              <ListItem key={id} onClick={() => onSelect(id)} button>
+                <ListItemText primary={longname} />
               </ListItem>
             ))}
           </List>
@@ -106,6 +106,7 @@ const RelatedBusinessesForm = (props) => {
             ({
               show,
               id,
+              promoted,
               shortname,
               smalldescription,
               image,
@@ -115,6 +116,7 @@ const RelatedBusinessesForm = (props) => {
                 key={id}
                 classes={{ root: classes.related }}
                 show={show}
+                promoted={promoted}
                 image={{
                   alt: `Image principale de ${shortname}`,
                   src: image ? image.src : null,
@@ -123,7 +125,7 @@ const RelatedBusinessesForm = (props) => {
                 shortname={shortname}
                 smalldescription={smalldescription}
                 promote={() => onPromote(id)}
-                dowgrade={() => onDowngrade(id)}
+                downgrade={() => onDowngrade(id)}
                 onDelete={() => onDelete(id)}
               />
             )
@@ -136,7 +138,12 @@ const RelatedBusinessesForm = (props) => {
 
 RelatedBusinessesForm.propTypes = {
   search: PropTypes.string,
-  suggestions: PropTypes.arrayOf(PropTypes.string.isRequired),
+  suggestions: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      longname: PropTypes.string.isRequired,
+    }).isRequired,
+  ),
   related: PropTypes.arrayOf(PropTypes.shape()),
   onChange: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,

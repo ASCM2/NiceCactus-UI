@@ -1,0 +1,15 @@
+mutation unpromoteRelated($user: ID!, $business: ID!, $related: ID!) {
+  unpromoterelated(user: $user, business: $business, related: $related) {
+    id
+    related(user: $user) {
+      id
+      image {
+        src
+      }
+      category
+      promoted
+      shortname
+      smalldescription
+    }
+  }
+}
