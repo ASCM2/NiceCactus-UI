@@ -341,10 +341,13 @@ const Business = (props) => {
             liked={liked}
             likes={likes}
             tab={tab}
+            relatedNumber={related.length}
+            imagesNumber={images.length}
             onSubscribe={() => { subscribe({ variables: { user: user.id, business: id } }); }}
             onUnsubscribe={() => { unsubscribe({ variables: { user: user.id, business: id } }); }}
             onLike={() => { like({ variables: { user: user.id, business: id } }); }}
             onDislike={() => { dislike({ variables: { user: user.id, business: id } }); }}
+            onShare={() => {}}
             onTabSelected={onTabSelected}
           />
         );

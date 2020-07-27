@@ -15,7 +15,7 @@ const useStyles = makeStyles({
 });
 
 const column = 400;
-const Related = withSize()((props) => {
+const Related = (props) => {
   const { size: { width }, ...rest } = props;
   const classes = useStyles({ ...rest });
   const cols = Math.floor(width / column);
@@ -29,7 +29,7 @@ const Related = withSize()((props) => {
       />
     </div>
   );
-});
+};
 
 Related.propTypes = {
   size: PropTypes.shape({
@@ -37,4 +37,4 @@ Related.propTypes = {
   }).isRequired,
 };
 
-export default Related;
+export default withSize()(Related);

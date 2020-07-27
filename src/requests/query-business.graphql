@@ -2,12 +2,15 @@ query queryBusiness($user: ID!, $business: ID!) {
   business(user: $user, id: $business) {
     id
     icon {
+      id
       src
     }
     logo {
+      id
       src
     }
     image {
+      id
       src
     }
     category
@@ -31,13 +34,22 @@ query queryBusiness($user: ID!, $business: ID!) {
     }
     related(user: $user) {
       id
+      icon {
+        id
+        src
+      }
       image {
+        id
         src
       }
       category
       promoted
       shortname
       smalldescription
+      city
+      follower
+      liked
+      likes
     }
     follower
     followersNumber

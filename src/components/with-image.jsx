@@ -75,7 +75,7 @@ WithImage.propTypes = {
   */
   component: PropTypes.node.isRequired,
   /* Composant rendu si la prop mediaError est à true */
-  error: PropTypes.node.isRequired,
+  error: PropTypes.node,
   /* Composant rendu si la prop mediaLoading est à true */
   loading: PropTypes.node.isRequired,
 };
@@ -89,6 +89,7 @@ WithImage.defaultProps = {
      n'a pas rencontré d'erreur lors de son chargement.
   */
   mediaError: false,
+  error: null,
 };
 
 

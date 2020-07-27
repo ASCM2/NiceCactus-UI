@@ -6,6 +6,7 @@ query searchBusinesses($user: ID!, $term: String!, $after: ID, $number: Int!, $c
     businesses {
       id
       image {
+        id
         src
       }
       category

@@ -1,15 +1,60 @@
 mutation addRelated($user: ID!, $business: ID!, $related: ID!) {
   addrelated(user: $user, business: $business, related: $related) {
     id
+    icon {
+      id
+      src
+    }
+    logo {
+      id
+      src
+    }
+    image {
+      id
+      src
+    }
+    category
+    shortname
+    longname
+    smalldescription
+    description
+    address
+    postalCode
+    city
+    country
+    location {
+      lat
+      lng
+    }
+    images {
+      id
+      src
+      liked
+      likes
+    }
     related(user: $user) {
       id
+      icon {
+        id
+        src
+      }
       image {
+        id
         src
       }
       category
       promoted
       shortname
       smalldescription
+      city
+      follower
+      liked
+      likes
     }
+    follower
+    followersNumber
+    liked
+    likes
+    owner
   }
 }

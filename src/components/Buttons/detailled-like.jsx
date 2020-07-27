@@ -58,7 +58,7 @@ const LikeButton = (props) => {
         <IconButton onClick={connected ? onLikeAction : askSignIn} aria-label="Like">
           {like ? <FavoriteIcon color="secondary" /> : <FavoriteIcon style={{ color: '#fff' }} />}
         </IconButton>
-        <Typography className={classes.likes} variant="subtitle1" component="span" color="inherited">
+        <Typography className={classes.likes} variant="subtitle1" component="span" color="inherit">
           {likes}
         </Typography>
       </span>

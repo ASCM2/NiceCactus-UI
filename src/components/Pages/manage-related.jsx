@@ -82,8 +82,12 @@ const ManageRelated = (props) => {
 
     switch (name) {
       case 'search':
-        searchRelated({ variables: { user: user.id, term: search, number: numberOfSuggestions } });
         setSearch(value);
+        if (search.length > 0) {
+          searchRelated({
+            variables: { user: user.id, term: search, number: numberOfSuggestions }
+          });
+        }
         clearTimeout(timeout);
 
         timeout = setTimeout(async () => {
