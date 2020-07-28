@@ -30,7 +30,7 @@ const ManageRelated = (props) => {
     variables: { user: user.id, business: id },
   });
   const [searchRelated, { data }] = useLazyQuery(SEARCH_BUSINESSES);
-  const [addRelated] = useMutation(ADD_RELATED, {
+  const [addRelated, { error }] = useMutation(ADD_RELATED, {
     update: (cache, { data: { addrelated: { related: updatedRelated } } }) => {
       const { business } = cache.readQuery({
         query: QUERY_RELATED,
@@ -69,6 +69,11 @@ const ManageRelated = (props) => {
 
   let businesses = [];
   let relatedBusinesses = [];
+
+  if (error) {
+    console.log('error: ');
+    console.log(error.graphQLErrors);
+  }
 
   if (data) { businesses = data.search.businesses; }
 

@@ -24,10 +24,7 @@ import businessIcon from '../business-icon';
 const iconSize = 40;
 const locationIconColor = blue[300];
 const useStyles = makeStyles((theme) => ({
-  root: {
-    margin: 20,
-    maxWidth: 400,
-  },
+  root: { maxWidth: 400 },
   header: {
     paddingBottom: 0,
   },

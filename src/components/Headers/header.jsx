@@ -104,11 +104,11 @@ const tabToTabIndex = (tab) => {
     case 'related':
       return 1;
     case 'posts':
-      return 2;
-    case 'images':
-      return 3;
-    case 'stops':
       return 4;
+    case 'images':
+      return 2;
+    case 'stops':
+      return 3;
     default:
       return undefined;
   }
@@ -120,11 +120,11 @@ const tabIndexToTab = (tabIndex) => {
       return 'presentation';
     case 1:
       return 'related';
-    case 2:
-      return 'posts';
-    case 3:
-      return 'images';
     case 4:
+      return 'posts';
+    case 2:
+      return 'images';
+    case 3:
       return 'stops';
     default:
       return undefined;

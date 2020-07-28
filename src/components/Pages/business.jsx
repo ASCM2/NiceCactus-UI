@@ -26,6 +26,7 @@ import Presentation from '../Sections/presentation';
 import PresentationSkeleton from '../Skeletons/presentation';
 import Related from '../Sections/related';
 import RelatedSkeleton from '../Skeletons/related-businesses';
+import Photos from '../Sections/photos';
 
 
 const QUERY_BUSINESS = loader('../../requests/query-business.graphql');
@@ -85,7 +86,7 @@ const Business = (props) => {
   const [redirectCreatePresentation, setRedirectCreatePresentation] = useState(false);
   const [redirectUpdatePresentation, setRedirectUpdatePresentation] = useState(false);
   const [mode, setMode] = useState(defaultMode || 'view');
-  const [tab, setTab] = useState('related');
+  const [tab, setTab] = useState('presentation');
   const [clientFilesUploading, setClientFilesUploading] = useState(false);
   const [clientIconUploading, setClientIconUploading] = useState(false);
   const {
@@ -224,6 +225,18 @@ const Business = (props) => {
     );
   }
 
+  const onUploadStart = () => { setClientFilesUploading(true); };
+  const onFileUploaded = (event) => {
+    setClientFilesUploading(false);
+    upload({
+      variables: {
+        user: user.id,
+        business: id,
+        images: event.target.files,
+      },
+    });
+  };
+
   return (
     <Layout
       mode={mode}
@@ -274,17 +287,8 @@ const Business = (props) => {
             mode={mode}
             alt={`Image de galerie de ${shortname}`}
             images={images}
-            onUploadStart={() => { setClientFilesUploading(true); }}
-            onFileUploaded={(event) => {
-              setClientFilesUploading(false);
-              upload({
-                variables: {
-                  user: user.id,
-                  business: id,
-                  images: event.target.files,
-                },
-              });
-            }}
+            onUploadStart={onUploadStart}
+            onFileUploaded={onFileUploaded}
           />
         );
       }}
@@ -392,6 +396,20 @@ const Business = (props) => {
                 mode={mode}
                 owner={user.id === owner}
                 related={related}
+              />
+            );
+          case 'images':
+            return (
+              <Photos
+                classes={{ root: className }}
+                mode={mode}
+                owner={user.id === owner}
+                id={id}
+                uploading={uploading}
+                shortname={shortname}
+                images={images}
+                onUploadStart={onUploadStart}
+                onFileUploaded={onFileUploaded}
               />
             );
           default:
