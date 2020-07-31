@@ -47,6 +47,10 @@ query queryBusiness($user: ID!, $business: ID!) {
       shortname
       smalldescription
       city
+      location {
+        lat
+        lng
+      }
       follower
       liked
       likes

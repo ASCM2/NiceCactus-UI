@@ -27,6 +27,8 @@ import PresentationSkeleton from '../Skeletons/presentation';
 import Related from '../Sections/related';
 import RelatedSkeleton from '../Skeletons/related-businesses';
 import Photos from '../Sections/photos';
+import Map from '../business-map';
+import MapSkeleton from '../Skeletons/map';
 
 
 const QUERY_BUSINESS = loader('../../requests/query-business.graphql');
@@ -176,8 +178,8 @@ const Business = (props) => {
     postalCode = business.postalCode;
     city = business.city;
     country = business.country;
-    latitude = business.location.lat;
-    longitude = business.location.lng;
+    latitude = Number(business.location.lat);
+    longitude = Number(business.location.lng);
     follower = business.follower;
     followers = business.followersNumber;
     liked = business.liked;
@@ -415,6 +417,26 @@ const Business = (props) => {
           default:
             return null;
         }
+      }}
+      map={(className) => {
+        if (loading) return <MapSkeleton classes={{ root: className }} />;
+
+        const relatedLocations = related.map(
+          ({ location: { lat, lng } }) => ({ main: false, coordinates: [lat, lng] })
+        );
+        return (
+          <>
+            {latitude && longitude && (
+              <Map
+                classes={{ root: className }}
+                locations={[
+                  { main: true, coordinates: [latitude, longitude] },
+                  ...relatedLocations
+                ]}
+              />
+            )}
+          </>
+        );
       }}
     />
   );

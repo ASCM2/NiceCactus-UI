@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
   map: {
     gridArea: 'map',
     [theme.breakpoints.up('md')]: {
-      height: 350,
+      height: 500,
     },
     [theme.breakpoints.only('sm')]: {
       marginTop: 10,

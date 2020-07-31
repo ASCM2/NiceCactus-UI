@@ -4,6 +4,7 @@ mutation unpromoteRelated($user: ID!, $business: ID!, $related: ID!) {
     related(user: $user) {
       id
       image {
+        id
         src
       }
       category
