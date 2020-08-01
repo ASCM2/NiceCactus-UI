@@ -84,7 +84,7 @@ let rootRef;
 let sliderRef;
 const Slider = withSize()((props) => {
   const {
-    itemsLoaded,
+    resize, itemsLoaded,
     padding, spacing, items,
     left, right, size: { width },
     moveLen, ...rest
@@ -123,10 +123,7 @@ const Slider = withSize()((props) => {
 
   if (items.length === 0) return null;
 
-  window.onresize = () => {
-    sliderRef.style.left = '0px';
-    setMoving(true);
-  };
+  if (resize) { window.onresize = () => { if (sliderRef) { sliderRef.style.left = '0px'; setMoving(true); } }; }
 
   return (
     <div ref={(el) => { rootRef = el; }} className={classes.root}>
@@ -144,6 +141,7 @@ const Slider = withSize()((props) => {
 });
 
 Slider.propTypes = {
+  resize: PropTypes.bool,
   itemsLoaded: PropTypes.number,
   padding: PropTypes.number,
   spacing: PropTypes.number,
@@ -155,6 +153,7 @@ Slider.propTypes = {
 };
 
 Slider.defaultProps = {
+  resize: true,
   itemsLoaded: Number.POSITIVE_INFINITY,
   padding: 0,
   spacing: 10,

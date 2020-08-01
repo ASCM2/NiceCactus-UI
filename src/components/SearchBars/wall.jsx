@@ -19,6 +19,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
 
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -35,10 +36,13 @@ import RestaurantIcon from '@material-ui/icons/Restaurant';
 import SupermarketIcon from '@material-ui/icons/ShoppingCart';
 import CinemaIcon from '@material-ui/icons/Movie';
 import StartUpIcon from '@material-ui/icons/Business';
+import LeftArrowIcon from '@material-ui/icons/KeyboardArrowLeft';
+import RightArrowIcon from '@material-ui/icons/KeyboardArrowRight';
 
 import logo from '../images/logo.svg';
 
 import BusinessChip from '../Chips/business';
+import Slider from '../slider';
 
 
 const logoContainerSize = 105;
@@ -111,11 +115,12 @@ const useStyles = makeStyles({
     justifyContent: 'center',
   },
   chipsContainer: {
-    flexGrow: 1,
+    marginTop: 5,
+    /* flexGrow: 1,
     padding: '0 0 0 10px',
     display: 'flex',
     flexWrap: 'wrap',
-    jusitifyContent: 'flex-start',
+    jusitifyContent: 'flex-start', */
   },
   chip: {
     marginTop: 5,
@@ -210,6 +215,43 @@ const SearchBar = (props) => {
             Filtrer par
           </Typography>
         </div>
+        <Slider
+          classes={{ root: classes.chipsContainer }}
+          resize={false}
+          moveLen={60}
+          items={chipsData.map(({ label, icon: Icon, category }) => (
+            <BusinessChip
+              key={label}
+              active={actives[category]}
+              label={label}
+              icon={<Icon />}
+              onClick={(active) => handleSelect({ active, category })}
+            />
+          ))}
+          left={(className, prev) => (
+            <div
+              className={className}
+              role="button"
+              tabIndex={0}
+              onClick={prev}
+              onKeyPress={prev}
+            >
+              <LeftArrowIcon />
+            </div>
+          )}
+          right={(className, next) => (
+            <div
+              className={className}
+              role="button"
+              tabIndex={0}
+              onClick={next}
+              onKeyPress={next}
+            >
+              <RightArrowIcon />
+            </div>
+          )}
+        />
+        {/*
         <div className={classes.chipsContainer}>
           {chipsData.map(({ label, icon: Icon, category }) => (
             <div key={label} className={classes.chip}>
@@ -222,6 +264,7 @@ const SearchBar = (props) => {
             </div>
           ))}
         </div>
+        */}
       </div>
     </Paper>
   );

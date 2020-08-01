@@ -14,7 +14,7 @@
   Tests (fin) */
 
 /* global document: false, window: false */
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -110,15 +110,16 @@ const onScroll = (onListEndReached) => () => {
   called = false;
 };
 
-const viewportWidth = document.body.clientWidth;
 
 let scrollHandler = null;
 const HomeLayout = (props) => {
   const {
     appbar, search, subtitle, sortCriteria, placeholder, cards,
-    margin, column, gutter, placeholderUI, onListEndReached, ...rest
+    column, gutter, placeholderUI, onListEndReached, ...rest
   } = props;
+  const [viewportWidth, setViewportWidth] = useState(document.body.clientWidth);
   const cols = columns(viewportWidth, column, gutter);
+  const margin = getComputedMargin(viewportWidth, column, gutter);
   const classes = useStyles({
     column, cols, gutter, margin, ...rest,
   });
@@ -129,10 +130,14 @@ const HomeLayout = (props) => {
     window.removeEventListener('scroll', scrollHandler);
   }
 
+  const resizeHandler = () => { console.log('I am called (Layout)'); setViewportWidth(document.body.clientWidth); };
+
   useEffect(() => {
     window.addEventListener('scroll', scrollHandler);
+    window.addEventListener('resize', resizeHandler);
     return () => {
       window.removeEventListener('scroll', scrollHandler);
+      window.removeEventListener('resize', resizeHandler);
     };
   });
 
@@ -161,10 +166,9 @@ const HomeLayout = (props) => {
 
 HomeLayout.propTypes = {
   /*
-    Marges, colonnes, gutters structurant le layout selon les recommandations du Material Design
+    Colonnes, gutters structurant le layout selon les recommandations du Material Design
     Chaque carte a la largeur d'une colonne en page d'accueil.
   */
-  margin: PropTypes.number,
   column: PropTypes.number,
   gutter: PropTypes.number,
 
@@ -195,11 +199,9 @@ HomeLayout.propTypes = {
 
 const column = 360;
 const gutter = 10;
-const margin = getComputedMargin(viewportWidth, column, gutter);
 HomeLayout.defaultProps = {
   column,
   gutter,
-  margin,
   /* Par défaut les cartes sont affichées et non pas la placeholder UI de remplacement */
   placeholderUI: false,
 };

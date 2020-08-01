@@ -1,4 +1,4 @@
-/* global document: false, localStorage: false */
+/* global document: false, localStorage: false, window: false */
 import React, { useState } from 'react';
 import { useLocation, Redirect } from 'react-router-dom';
 
@@ -59,9 +59,15 @@ const Home = () => {
   const [term, setTerm] = useState(undefined);
   const [categories, setCategories] = useState(null);
   const [sortCriteria, setSortCriteria] = useState(null);
-  const viewportWidth = document.body.clientWidth;
+  const [viewportWidth, setViewportWidth] = useState(document.body.clientWidth);
   const column = 360;
-  const gutter = 10;
+  let gutter = 10;
+  const leftSpace = viewportWidth - (2 * column + gutter);
+
+  if (leftSpace <= column) {
+    gutter = leftSpace / 3;
+  }
+
   const columns = cols(viewportWidth, column, gutter);
   const number = numberOfCardsToDisplay(columns);
 
@@ -133,6 +139,11 @@ const Home = () => {
       onRedirect={() => setRedirectId(id)}
     />
   ));
+
+  window.onresize = () => {
+    console.log(document.body.clientWidth);
+    setViewportWidth(document.body.clientWidth);
+  };
 
   return (
     <>
