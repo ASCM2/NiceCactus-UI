@@ -24,7 +24,7 @@ import businessIcon from '../business-icon';
 const iconSize = 40;
 const locationIconColor = blue[300];
 const useStyles = makeStyles((theme) => ({
-  root: { maxWidth: 400 },
+  root: { maxWidth: 400, cursor: 'pointer' },
   header: {
     paddingBottom: 0,
   },
@@ -97,7 +97,7 @@ const Related = (props) => {
     city, image, smalldescription,
     follower, liked, likes,
     onSubscribe, onUnsubscribe,
-    onLike, onDislike,
+    onLike, onDislike, onRedirect,
     ...rest
   } = props;
   const [raised, setRaised] = useState(false);
@@ -113,6 +113,7 @@ const Related = (props) => {
       onMouseLeave={() => setRaised(false)}
       onFocus={() => setRaised(true)}
       onBlur={() => setRaised(false)}
+      onClick={onRedirect}
     >
       <CardHeader
         classes={{ root: classes.header }}
@@ -213,6 +214,7 @@ Related.propTypes = {
   onUnsubscribe: PropTypes.func.isRequired,
   onLike: PropTypes.func.isRequired,
   onDislike: PropTypes.func.isRequired,
+  onRedirect: PropTypes.func.isRequired,
 };
 
 Related.defaultProps = {

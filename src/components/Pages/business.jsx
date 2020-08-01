@@ -76,12 +76,14 @@ const Business = (props) => {
   } = props;
   let reload;
   let defaultMode;
+  let from;
 
   const { state } = location;
 
   if (state) {
     reload = state.reload;
     defaultMode = state.mode;
+    from = state.from;
   }
 
   const [redirectUpdateBasics, setRedirectUpdateBasics] = useState(false);
@@ -273,6 +275,7 @@ const Business = (props) => {
               }
             }}
             back={() => {
+              if (from) { history.push(from); return; }
               history.push('/');
             }}
           />
@@ -448,6 +451,7 @@ Business.propTypes = {
     state: PropTypes.shape({
       reload: PropTypes.bool,
       mode: PropTypes.string,
+      from: PropTypes.string,
     }).isRequired,
   }).isRequired,
   history: PropTypes.shape({

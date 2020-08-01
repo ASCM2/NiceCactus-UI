@@ -48,6 +48,8 @@ const Map = (props) => {
   );
 
   useEffect(() => {
+    if (locations.length === 1) return;
+
     if (mapRef) {
       const mapWidth = mapRef.scrollWidth;
       const mapHeight = mapRef.scrollHeight;

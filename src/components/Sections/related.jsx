@@ -39,6 +39,8 @@ const Related = (props) => {
   const user = JSON.parse(localStorage.user);
   const connected = Boolean(user.roles.find((role) => role === 'user'));
 
+  const [redirectId, setRedirectId] = useState(null);
+
   const [subscribe] = useMutation(FOLLOW_BUSINESS);
   const [unsubscribe] = useMutation(UNSUBSCRIBE_BUSINESS);
   const [like] = useMutation(LIKE_BUSINESS);
@@ -61,18 +63,22 @@ const Related = (props) => {
 
   if (related.length === 0) {
     return (
-      <NoRelated
-        owner={owner}
-        mode={mode}
-        classes={{ root: classes.root }}
-        header="Vous n'avez défini aucune page reliée."
-        subheader={`
-          Ajoutez et commentez des pages d'autres établissements pour améliorer
-          l'intégration sur la région des nouveaux étudiants ou salariés intégrant
-          votre établissement.
-        `}
-        onClick={() => setRedirectAddRelated(true)}
-      />
+      <div style={{ display: 'flex', alignItems: 'center', minHeight: 400 }} className={classes.root}>
+        {owner && mode === 'edit' && (
+          <NoRelated
+            owner={owner}
+            mode={mode}
+            header="Vous n'avez défini aucune page reliée."
+            subheader={`
+              Ajoutez et commentez des pages d'autres établissements pour améliorer
+              l'intégration sur la région des nouveaux étudiants ou salariés intégrant
+              votre établissement.
+            `}
+            onClick={() => setRedirectAddRelated(true)}
+          />
+        )}
+        {mode === 'view' && <NoRelated />}
+      </div>
     );
   }
 
@@ -131,9 +137,19 @@ const Related = (props) => {
             onDislike={() => {
               dislike({ variables: { user: user.id, business: relatedId } });
             }}
+            onRedirect={() => setRedirectId(relatedId)}
           />
         ))}
       />
+      {redirectId && (
+        <Redirect
+          push
+          to={{
+            pathname: `/${redirectId}`,
+            state: { from: `/${id}` }
+          }}
+        />
+      )}
     </div>
   );
 };
