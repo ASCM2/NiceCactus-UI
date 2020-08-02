@@ -1,3 +1,4 @@
+/* global document: false */
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -23,12 +24,16 @@ import DetailledLikeButton from '../Buttons/detailled-like';
 const useStyles = makeStyles((theme) => ({
   root: {
     position: 'relative',
+    [theme.breakpoints.only('sm')]: {
+      maxWidth: document.body.clientWidth - 20,
+    },
   },
   image: {
     height: 200,
     backgroundPosition: 'top left',
   },
   shady: {
+    boxSizing: 'border-box',
     height: 100,
     position: 'absolute',
     top: 100,

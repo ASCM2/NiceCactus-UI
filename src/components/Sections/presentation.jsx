@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     color: '#fff',
   },
   presentation: {
+    boxSizing: 'border-box',
     padding: 17,
   },
   shortnameContainer: {

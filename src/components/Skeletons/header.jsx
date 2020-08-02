@@ -1,3 +1,4 @@
+/* global document: false */
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -13,6 +14,9 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   root: {
     position: 'relative',
+    [theme.breakpoints.only('sm')]: {
+      maxWidth: document.body.clientWidth - 35,
+    },
   },
   shady: {
     height: 100,

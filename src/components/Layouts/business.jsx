@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     [theme.breakpoints.up('md')]: {
       gridTemplateAreas: `
-        'appbar appbar appbar appbar appbar'
         'gallery gallery gallery gallery gallery'
         'subappbar subappbar subappbar subappbar subappbar'
         '. header header header .'
@@ -27,7 +26,6 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.only('sm')]: {
       gridTemplateAreas: `
-        'appbar appbar appbar'
         'gallery gallery gallery'
         'subappbar subappbar subappbar'
         '. header .'
@@ -102,7 +100,7 @@ const BusinessLayout = (props) => {
         {mode === 'edit' && subappbar(classes.subappbar)}
         {header(classes.header)}
         {body(classes.body)}
-        {map(classes.map)}
+        {/* map(classes.map) */}
         {address(classes.address)}
         {contacts(classes.contacts)}
         {promoted(classes.promoted)}
