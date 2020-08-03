@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 
 import CustomMarker from './business-marker';
+import addResizeListener from './add-resize-listener';
 
 
 const useStyles = makeStyles({
@@ -23,6 +24,8 @@ const useStyles = makeStyles({
 let mapRef;
 const Map = (props) => {
   const { locations, ...rest } = props;
+  const [mapHeight, setMapHeight] = useState('100%');
+  const [mapWidth, setMapWidth] = useState('100%');
   const classes = useStyles({ ...rest });
   const { coordinates: [mainLat, mainLng] } = locations.find(({ main }) => main);
   const [viewport, setViewPort] = useState(
@@ -47,12 +50,25 @@ const Map = (props) => {
     ({ main, coordinates: [lat, lng] }) => <CustomMarker main={main} lat={lat} lng={lng} />,
   );
 
+  addResizeListener(() => {
+    setMapHeight(mapRef.scrollHeight);
+    setMapWidth(mapRef.scrollWidth);
+    setViewPort({
+      ...viewport,
+      width: mapRef.scrollWidth,
+      height: mapRef.scrollHeight,
+    });
+  });
+
   useEffect(() => {
     if (locations.length === 1) return;
 
     if (mapRef) {
-      const mapWidth = mapRef.scrollWidth;
-      const mapHeight = mapRef.scrollHeight;
+      /* const mapWidth = mapRef.scrollWidth;
+      const mapHeight = mapRef.scrollHeight; */
+
+      setMapHeight(mapRef.scrollHeight);
+      setMapWidth(mapRef.scrollWidth);
 
       const coordinates = [
         [mainLat, mainLng],
@@ -73,14 +89,14 @@ const Map = (props) => {
 
       setViewPort({
         ...viewport,
-        width: initViewport.width,
-        height: initViewport.height,
+        width: mapWidth,
+        height: mapHeight,
         latitude: initViewport.latitude,
         longitude: initViewport.longitude,
         zoom: initViewport.zoom,
       });
     }
-  }, []);
+  }, [mapWidth, mapHeight]);
 
   return (
     <Paper ref={(el) => { mapRef = el; }} className={classes.root} square>

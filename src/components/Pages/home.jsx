@@ -16,6 +16,8 @@ import ConnectionLost from '../EmptyStates/connection-lost';
 import Card from '../Cards/business';
 import BusinessCardSkeleton from '../Skeletons/business-card';
 
+import addResizeListener from '../add-resize-listener';
+
 
 const LAST_BUSINESSES = loader('../../requests/last-businesses.graphql');
 const SEARCH_BUSINESSES = loader('../../requests/search-businesses.graphql');
@@ -140,10 +142,15 @@ const Home = () => {
     />
   ));
 
-  window.onresize = () => {
+  /* window.onresize = () => {
     console.log(document.body.clientWidth);
     setViewportWidth(document.body.clientWidth);
-  };
+  }; */
+
+  addResizeListener(() => {
+    console.log(document.body.clientWidth);
+    setViewportWidth(document.body.clientWidth);
+  });
 
   return (
     <>

@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.only('sm')]: {
       marginTop: 10,
-      paddingTop: '30%',
+      height: 350,
     },
   },
   address: {
@@ -100,7 +100,7 @@ const BusinessLayout = (props) => {
         {mode === 'edit' && subappbar(classes.subappbar)}
         {header(classes.header)}
         {body(classes.body)}
-        {/* map(classes.map) */}
+        {map(classes.map)}
         {address(classes.address)}
         {contacts(classes.contacts)}
         {promoted(classes.promoted)}

@@ -19,6 +19,8 @@ import PropTypes from 'prop-types';
 
 import { makeStyles } from '@material-ui/core/styles';
 
+import addResizeListener from '../add-resize-listener';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -134,12 +136,12 @@ const HomeLayout = (props) => {
 
   useEffect(() => {
     window.addEventListener('scroll', scrollHandler);
-    window.addEventListener('resize', resizeHandler);
     return () => {
       window.removeEventListener('scroll', scrollHandler);
-      window.removeEventListener('resize', resizeHandler);
     };
   });
+
+  addResizeListener(resizeHandler);
 
   return (
     <div className={classes.root}>

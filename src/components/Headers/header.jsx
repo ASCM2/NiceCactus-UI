@@ -1,5 +1,5 @@
 /* global document: false */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Paper from '@material-ui/core/Paper';
@@ -19,13 +19,14 @@ import Portrait from '../portrait';
 import businessIcon from '../business-icon';
 import DetailledFollowButton from '../Buttons/detailled-follow';
 import DetailledLikeButton from '../Buttons/detailled-like';
+import addResizeListener from '../add-resize-listener';
 
 
 const useStyles = makeStyles((theme) => ({
   root: {
     position: 'relative',
     [theme.breakpoints.only('sm')]: {
-      maxWidth: document.body.clientWidth - 20,
+      maxWidth: ({ viewportWidth }) => viewportWidth - 20,
     },
   },
   image: {
@@ -148,7 +149,10 @@ const Header = (props) => {
     onLike, onDislike, onTabSelected,
     ...rest
   } = props;
-  const classes = useStyles({ ...rest });
+  const [viewportWidth, setViewportWidth] = useState(document.body.clientWidth);
+  const classes = useStyles({ viewportWidth, ...rest });
+
+  addResizeListener(() => { setViewportWidth(document.body.clientWidth); })
 
   return (
     <Paper
