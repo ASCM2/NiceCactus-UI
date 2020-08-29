@@ -1,7 +1,0 @@
-mutation unsubscribeBusiness($user: ID!, $business: ID!) {
-  unsubscribe(user: $user, business: $business) {
-    id
-    follower
-    followersNumber
-  }
-}
