@@ -1,68 +1,39 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Rock Paper Scissor Tournament UI
 
-## Available Scripts
+## Démarrage
 
-In the project directory, you can run:
+Après avoir cloné le projet sur Github, se rendre dans le répertoire NiceCactus-UI et lancer:
+
+### `npm install`
+
+Nous utilisons Create React App, l'installation des modules associés peut prendre un peu de temps.
+Une fois l'installation terminée, vous pouvez lancer l'application avec:
 
 ### `npm start`
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Aussi, le front-end est préconfiguré pour se connecter au microservice Rounds sur le port 3001 (la UI est elle accessible en local sur le port 3000).  
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Si vous souhaitez changer ce fonctionnement pour une raison quelconque, allez dans le fichier src/services/rounds et changez la variable BASE_URL.  
 
-### `npm test`
+Pour construire la UI, nous avons utilisé de simples composants Material Design ainsi que la librairie de styles de la bibliothèque Material UI qui fournit des composants Material Design dans un environnement React. Au cas où vous ne seriez pas familier avec ces environnements, nous avons inclus des commentaires très détaillés dans le code source de telle sorte que n'importe qui lisant le code et familier de React puisse le comprendre.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Principe de fonctionnement du jeu
 
-### `npm run build`
+Il y a deux modes de jeu:
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Un mode joueur contre ordinateur dans lequel vous pourrez affronter l'ordinateur à Pierre Feuille Ciseaux.
+- Un mode ordinateur contre ordinateur dans lequel vous pouvez faire s'affronter l'ordinateur contre lui-même.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Au début du jeu, deux cartes sont affichées et rien dans ces cartes n'est affiché, mais dès que vous cliquerez sur le bouton "Play !" ou sur le bouton "New Round !" selon votre mode de jeu, les cartes se rempliront avec les choix aléatoires qui vous auront été attribués simulant ainsi le jeu comme dans la vie réelle.  
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+En dessous des cartes, une descriptif apparaît pour indiquer lequel des deux joueurs est le vainqueur de la partie.  
+Vous pouvez ainsi jouer plusieurs parties de suite. Si vous jouez deux parties ou plus, un bouton "Last Round" apparaît vous permettant de visualiser les parties précédentes.  
+Si vous cliquez sur ce bouton, le bouton "Next Round" apparaît vous permettant de revenir aux parties les plus récentes.  
+Par contre, si vous n'êtes pas à la dernière partie jouée et que vous cliquez sur les boutons "Play !" ou "New Round !", vous créez une nouvelle partie et vous revenez automatiquement à cette dernière partie que vous venez de créer.  
 
-### `npm run eject`
+Vous pouvez changer de mode, mais ce changement supprime automatiquement toutes les parties précédentes.  
+Vous pouvez naviguer l'hitorique dans un mode donné, mais au changement de mode, l'hitorique est supprimé.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Extension du jeu au jeu Rock Paper Scissor Lizard Spock
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Pour étendre la UI pour ce jeu, il suffira juste d'inclure les nouvelles valeurs de coups possibles dans le tableau des coups possibles présent dans le fichier src/possible-moves.js.
