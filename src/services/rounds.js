@@ -36,9 +36,6 @@ export const clear = async () => {
     .catch((err) => console.log(err));
   const { winner, position, moves } = data;
 
-  console.log('data: ');
-  console.log(data);
-
   return { winner, position, moves };
 };
 

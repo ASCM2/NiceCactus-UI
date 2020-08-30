@@ -12,10 +12,15 @@ const usePlay = () => {
   const [error, setError] = useState(null);
 
   const onPlay = () => {
+    /*
+      On effectue une nouvelle partie en attribuant des coups au hasard à chacun des participants
+      parmi l'ensemble des coups permis.
+    */
     const left = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
     const right = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
     const newMoves = [left, right];
 
+    /* Et on récupére le résultat de la partie. */
     play(newMoves)
       .then((result) => {
         setWinner(result.winner);

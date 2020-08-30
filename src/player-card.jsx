@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+/*
+  Composant Material Card ainsi que cerytains de ses sous-composants permettant d'afficher
+  une carte à l'écran.
+*/
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
@@ -13,6 +17,7 @@ import { makeStyles } from '@material-ui/core/styles';
 const cardWidth = 200;
 const cardHeight = 200;
 const useStyles = makeStyles({
+  /* Nous modifions le CSS du composant en fonction de variables internes */
   root: {
     width: cardWidth,
     height: cardHeight,
@@ -25,6 +30,10 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  /*
+    Nous modifions le CSS du composant en fonction de variables internes
+    et de ses props.
+  */
   actionContainer: ({ role, hideButton }) => ({
     display: role === 'computer' && !hideButton ? 'none' : 'flex',
     alignItems: 'center',

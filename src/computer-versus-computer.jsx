@@ -2,11 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Typography from '@material-ui/core/Typography';
+/* Composant Material permettant d'afficher un bouton à l'écran */
 import Button from '@material-ui/core/Button';
 
 import { makeStyles } from '@material-ui/core/styles';
 
+/*
+  Composant représentant une carte représentant un joueur qui peut être un
+  joueur humain ou un ordinateur à afficher à l'écran.
+ */
 import PlayerCard from './player-card';
+/*
+  Les différents coups possibles d'un joueur.
+  Cette variable n'est utilisée que dans les propTypes pour
+  indiquer quels sont les coups acceptés par ce composant.
+*/
 import possibleMoves from './possible-moves';
 
 

@@ -11,7 +11,6 @@ const useClear = () => {
   const [error, setError] = useState(null);
 
   const onClear = () => {
-    console.log('i am called');
     clear()
       .then((result) => {
         setWinner(result.winner);
